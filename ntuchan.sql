@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 11, 2024 at 01:15 PM
+-- Generation Time: Nov 11, 2024 at 01:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,28 @@ SET time_zone = "+00:00";
 --
 -- Database: `ntuchan`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Boards`
+--
+
+CREATE TABLE `Boards` (
+  `board_id` int(11) NOT NULL,
+  `board_name` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `Boards`
+--
+
+INSERT INTO `Boards` (`board_id`, `board_name`) VALUES
+(1, '63CNTT-1'),
+(2, '63CNTT-2'),
+(3, '63CNTT-3'),
+(4, '63CNTT-4'),
+(5, '63CNTT-5');
 
 -- --------------------------------------------------------
 
@@ -154,6 +176,12 @@ INSERT INTO `Users` (`user_id`, `username`, `password_hash`, `email`, `major`, `
 --
 
 --
+-- Indexes for table `Boards`
+--
+ALTER TABLE `Boards`
+  ADD PRIMARY KEY (`board_id`);
+
+--
 -- Indexes for table `Categories`
 --
 ALTER TABLE `Categories`
@@ -205,6 +233,12 @@ ALTER TABLE `Users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `Boards`
+--
+ALTER TABLE `Boards`
+  MODIFY `board_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `Categories`
