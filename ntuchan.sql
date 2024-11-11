@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 10, 2024 at 02:09 PM
+-- Generation Time: Nov 11, 2024 at 01:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,9 +29,22 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `Categories` (
   `category_id` int(11) NOT NULL,
+  `board_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `Categories`
+--
+
+INSERT INTO `Categories` (`category_id`, `board_id`, `name`, `description`) VALUES
+(1, 1, 'Thông báo', 'Thông báo'),
+(2, 1, 'Thảo luận linh tinh', 'Thảo luận tùm lum'),
+(3, 1, 'Lập trình', 'Thảo luận lập trình'),
+(4, 1, 'Giải trí', 'Giải trí, game,...'),
+(6, 2, 'Thông báo lớp 63CNTT2', ''),
+(7, 2, 'Lập trình', 'Lập trình');
 
 -- --------------------------------------------------------
 
@@ -44,6 +57,15 @@ CREATE TABLE `Majors` (
   `major_name` varchar(100) NOT NULL,
   `major_info` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `Majors`
+--
+
+INSERT INTO `Majors` (`major_id`, `major_name`, `major_info`) VALUES
+(1, 'Công nghệ thông tin', 'Khoa Công nghệ thông tin'),
+(3, 'Công nghệ thực phẩm', 'Khoa Công nghệ thực phẩm'),
+(4, 'Kĩ thuật', 'Khoa Kĩ thuật');
 
 -- --------------------------------------------------------
 
@@ -73,6 +95,13 @@ CREATE TABLE `Posts` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `Posts`
+--
+
+INSERT INTO `Posts` (`post_id`, `thread_id`, `user_id`, `content`, `created_at`) VALUES
+(1, 1, 1, 'Test', '2024-11-11 12:14:58');
+
 -- --------------------------------------------------------
 
 --
@@ -88,6 +117,13 @@ CREATE TABLE `Threads` (
   `posts_count` int(11) DEFAULT NULL,
   `is_pinned` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `Threads`
+--
+
+INSERT INTO `Threads` (`thread_id`, `Title`, `category_id`, `created_at`, `newest_post_at`, `posts_count`, `is_pinned`) VALUES
+(1, 'Thread test', 1, '2024-11-11 12:13:43', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -107,6 +143,13 @@ CREATE TABLE `Users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='User table';
 
 --
+-- Dumping data for table `Users`
+--
+
+INSERT INTO `Users` (`user_id`, `username`, `password_hash`, `email`, `major`, `profile_pic`, `created_at`, `last_logon`) VALUES
+(1, 'mingu', 'admin', NULL, NULL, NULL, '2024-11-11 12:14:41', NULL);
+
+--
 -- Indexes for dumped tables
 --
 
@@ -115,7 +158,7 @@ CREATE TABLE `Users` (
 --
 ALTER TABLE `Categories`
   ADD PRIMARY KEY (`category_id`),
-  ADD UNIQUE KEY `name` (`name`);
+  ADD KEY `board_id` (`board_id`);
 
 --
 -- Indexes for table `Majors`
@@ -167,13 +210,13 @@ ALTER TABLE `Users`
 -- AUTO_INCREMENT for table `Categories`
 --
 ALTER TABLE `Categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `Majors`
 --
 ALTER TABLE `Majors`
-  MODIFY `major_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `major_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `Notifications`
@@ -185,23 +228,29 @@ ALTER TABLE `Notifications`
 -- AUTO_INCREMENT for table `Posts`
 --
 ALTER TABLE `Posts`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `Threads`
 --
 ALTER TABLE `Threads`
-  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `Users`
 --
 ALTER TABLE `Users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `Categories`
+--
+ALTER TABLE `Categories`
+  ADD CONSTRAINT `category_board_fk` FOREIGN KEY (`board_id`) REFERENCES `Boards` (`board_id`);
 
 --
 -- Constraints for table `Notifications`
