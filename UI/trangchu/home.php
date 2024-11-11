@@ -21,11 +21,20 @@
 ?>
 
 <?php
-    $query = "SELECT * FROM `majors`";
+    $query = "SELECT * FROM `boards`";
     $result = mysqli_query($conn,$query);
-    $query1 = "SELECT * FROM `users`";
+
+    $query1 = "SELECT * FROM `categories`";
     $result1 = mysqli_query($conn,$query1);
-    $sltv=mysqli_num_rows($result1);
+    
+
+    $query2 = "SELECT * FROM `users`";
+    $result2 = mysqli_query($conn,$query2);
+    $sltv=mysqli_num_rows($result2);
+
+    $query3 = "SELECT * FROM `threads` ORDER BY created_at DESC LIMIT 5";
+    $result3 = mysqli_query($conn, $query3);
+    
 ?>
 <div class="container mt-5">
     <div class="header-section d-flex justify-content-between align-items-center mb-4">
@@ -53,17 +62,21 @@
             while ($row = mysqli_fetch_array($result))
             {
                 echo "<h2>";
-                echo $row["major_info"];
+                echo $row["board_name"];
                 echo "</h2>";
-                echo "
-                    <div class=\"list-group mb-4\">
-                    <a href=\"#\" class=\"list-group-item list-group-item-action\">Mục 1: Hỏi Đáp về Công Nghệ</a>
-                    <a href=\"#\" class=\"list-group-item list-group-item-action\">Mục 2: Hỏi Đáp về Cuộc Sống</a>
-                    <a href=\"#\" class=\"list-group-item list-group-item-action\">Mục 3: Hỏi Đáp về Du Lịch</a>
-                    <a href=\"#\" class=\"list-group-item list-group-item-action\">Mục 4: Hỏi Đáp về Sức Khỏe</a>
-                    <a href=\"#\" class=\"list-group-item list-group-item-action\">Mục 5: Hỏi Đáp về Học Tập</a>
-                    </div>
-                ";
+                echo "<div class=\"list-group mb-4\">";
+                mysqli_data_seek($result1, 0);
+                while ($row1 =mysqli_fetch_array($result1))
+                {
+                    if($row["board_id"] == $row1["board_id"])
+                    {
+                        echo "<a href=\"#\" class=\"list-group-item list-group-item-action\">";
+                        echo $row1["name"];
+                        echo "</a>";
+                    }
+                    
+                }
+                echo "</div>";
             }
         ?>
         </div>
@@ -74,12 +87,14 @@
                 <?php echo "<p>".$sltv." Thành viên </p>" ?>
                 <h3>Bình Luận Mới Nhất</h3>
                 <ul class="list-unstyled">
-                    <li>Người dùng 1: Câu hỏi về công nghệ.</li>
-                    <li>Người dùng 2: Câu hỏi về sức khỏe.</li>
-                    <li>Người dùng 3: Câu hỏi về du lịch.</li>
-                    <li>Người dùng 4: Câu hỏi về công nghệ.</li>
-                    <li>Người dùng 5: Câu hỏi về sức khỏe.</li>
-                    <li>Người dùng 6: Câu hỏi về du lịch.</li>
+                <?php 
+                    while($row=mysqli_fetch_array($result3))
+                    {
+                        echo "<li>";
+                        echo $row["Title"];
+                        echo "</li>";
+                    }
+                ?>
                 </ul>
 
                 <h3>Kết Nối Với Chúng Tôi</h3>
