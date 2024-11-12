@@ -19,7 +19,7 @@
               class="img-fluid" alt="Sample image">
           </div>
           <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-            <form>
+            <form action="../../Code/authentication/login.php" method="post">
               <div class="divider">
                   <p id="title_1" class="text-center fw-bold">NTU FORUMS LOGIN</p>
               </div>
@@ -31,15 +31,15 @@
     
               <!-- Email input -->
               <div data-mdb-input-init class="form-outline mb-4">
-                  <label class="form-label font-weight-bold" for="form3Example3">Username or Email</label>
-                  <input type="text" id="form3Example3" class="form-control form-control-lg"
-                  placeholder="Nhập địa chỉ email hoặc tài khoản" />
+                  <label class="form-label font-weight-bold" for="form3Example3">Username</label>
+                  <input type="text" name="username" required id="form3Example3" class="form-control form-control-lg"
+                  placeholder="Nhập tài khoản" />
               </div>
     
               <!-- Password input -->
               <div data-mdb-input-init class="form-outline mb-3">
                   <label class="form-label font-weight-bold" for="form3Example4">Password</label>
-                  <input type="password" id="form3Example4" class="form-control form-control-lg"
+                  <input type="password" name="password" required id="form3Example4" class="form-control form-control-lg"
                   placeholder="Nhập mật khẩu" />
               </div>
     
