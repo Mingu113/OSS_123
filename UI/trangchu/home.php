@@ -41,7 +41,7 @@
     ?>
     <div class="container mt-5">
         <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <form action="../code/home.php" class="form-inline" method="post">
+            <form action="../Home/search.php" class="form-inline" method="post">
                 <div class="input-group">
                     <input class="form-control" type="search" name="search" placeholder="Tìm kiếm..."
                         aria-label="Search">
