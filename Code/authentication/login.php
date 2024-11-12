@@ -8,7 +8,7 @@ $accounts = mysqli_query($connect, $query);
 $password = hash("sha256", $password + $username);
 // Vi cac tai khoan la UNIQUE theo username nen lay cai rows dau tien
 if(mysqli_num_rows($accounts) = 0) {
-    echo "Tai khoan khong ton tai, hoac nhap sai username";
+    echo "Tài khoản không tồn tại, hoặc nhập sai tên người dùng";
 } else {
     $row = mysqli_fetch_array($accounts);
     if($row['password_hash'] == $password) {
@@ -18,6 +18,7 @@ if(mysqli_num_rows($accounts) = 0) {
 }
 $result = mysqli_query($connect, $query);
 if ($result) {
-    echo "<h1>Dang nhap thanh cong</h1>";
+    echo "<h1>Đăng nhập thành công</h1>";
 }
+mysqli_close($connect);
 ?>
