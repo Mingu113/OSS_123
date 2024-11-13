@@ -24,18 +24,18 @@
     ?>
 
     <?php
-    $query = "SELECT * FROM `boards`";
+    $query = "SELECT * FROM `Boards`";
     $result = mysqli_query($conn, $query);
 
-    $query1 = "SELECT * FROM `categories`";
+    $query1 = "SELECT * FROM `Categories`";
     $result1 = mysqli_query($conn, $query1);
 
 
-    $query2 = "SELECT * FROM `users`";
+    $query2 = "SELECT * FROM `Users`";
     $result2 = mysqli_query($conn, $query2);
     $sltv = mysqli_num_rows($result2);
 
-    $query3 = "SELECT * FROM `threads` ORDER BY created_at DESC LIMIT 5";
+    $query3 = "SELECT * FROM `Threads` ORDER BY created_at DESC LIMIT 5";
     $result3 = mysqli_query($conn, $query3);
 
     ?>
