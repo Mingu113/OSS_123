@@ -30,7 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Kiểm tra nếu có bản ghi hợp lệ
     if ($result->num_rows == 1) {
-        $_SESSION["username"] = $username;
+        $user = $result->fetch_assoc();
+        $_SESSION["username"] = $user["username"];
+        $_SESSION["user_id"] = $user["user_id"];
         header("Location: ../trangchu/home.php");  // Điều hướng về home.php trong thư mục trang chủ
         exit();
     } else {
