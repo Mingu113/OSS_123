@@ -20,11 +20,11 @@ $error = "";  // Biến lưu thông báo lỗi
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];  // Chuyển 'name' thành 'username'
     $password = $_POST["password"];
-
+    $password = hash("sha256", $password);
     // Truy vấn để kiểm tra thông tin đăng nhập
-    $query = "SELECT * FROM users WHERE username = ? AND password_hash = ?";
+    $query = "SELECT * FROM Users WHERE username = ? AND password_hash = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ss", $username, $password);  // Lưu ý: cần mã hóa mật khẩu (bạn có thể dùng password_hash)
+    $stmt->bind_param("ss", $username, $password);  
     $stmt->execute();
     $result = $stmt->get_result();
 
