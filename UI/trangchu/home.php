@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <h1 class="text-center">Diễn Đàn Hỏi Đáp</h1>
+        <h1 class="text-center">NTUCHAN</h1>
 
         <div class="row">
             <div class="col-lg-8">
@@ -86,12 +86,12 @@
                 <div class="sidebar">
                     <h3>Tổng Số Người Sử Dụng</h3>
                     <?php echo "<p>" . $sltv . " Thành viên </p>" ?>
-                    <h3>Bình Luận Mới Nhất</h3>
+                    <h3>Bài viết mới nhất</h3>
                     <ul class="list-unstyled">
                         <?php
                         while ($row = mysqli_fetch_array($result3)) {
                             echo "<li>";
-                            echo $row["Title"];
+                            echo $row["title"];
                             echo "</li>";
                         }
                         ?>
