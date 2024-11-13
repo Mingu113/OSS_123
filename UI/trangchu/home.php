@@ -21,6 +21,13 @@
 <body>
     <?php
     require "config.php";
+    session_start(); // start session
+    $isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
+    if($isLoggedIn) {
+        $username = $_SESSION["username"];
+        $user_id = $_SESSION["user_id"];
+    }
+    $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
     ?>
 
     <?php
@@ -53,8 +60,17 @@
                 </div>
             </form>
             <div>
-                <a href="#" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
-                <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                <?php if ($isLoggedIn): ?>
+                    <!-- Hiển thị ảnh đại diện và tên tài khoản nếu đã đăng nhập -->
+                    <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
+                    <span><?php echo htmlspecialchars($username); ?></span>
+                    <a href="../dangnhap/logout.php" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng
+                        Xuất</a>
+                <?php else: ?>
+                    <!-- Hiển nút Đăng Nhập nếu chưa đăng nhập -->
+                    <a href="../dangnhap/login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
+                    <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                <?php endif; ?>
             </div>
         </div>
 
