@@ -3,7 +3,7 @@ require "../config.php";
 $username = $_POST["username"];
 $password = $_POST["password"];
 $email = $_POST["email"];
-$query = "SELECT * FROM `Users` WHERE username = '$username'; ";
+$query = "SELECT * FROM `Users` WHERE username = $username";
 $accounts = mysqli_query($connect, $query);
 $password = hash("sha256", $password + $username);
 // Vi cac tai khoan la UNIQUE theo username nen lay cai rows dau tien
