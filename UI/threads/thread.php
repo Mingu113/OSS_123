@@ -103,7 +103,7 @@
 <?php
 session_start(); // Khởi động session để theo dõi trạng thái đăng nhập
 if (!isset($_SESSION["user_id"])) {
-    die("Lỗi: Bạn cần đăng nhập để có thể đăng bài.");
+    // die("Lỗi: Bạn cần đăng nhập để có thể đăng bài.");
 }
 
 $user_id = $_SESSION["user_id"];
@@ -116,7 +116,7 @@ if ($isLoggedIn) {
     $username = $_SESSION["username"];
 
     // Truy vấn để lấy thông tin người dùng (bao gồm ảnh đại diện nếu có)
-    $query = "SELECT * FROM users WHERE username = ?";
+    $query = "SELECT * FROM Users WHERE username = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -136,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $search = mysqli_real_escape_string($conn, $_POST['search']);
         $search_query = "
             SELECT p.post_id, p.content, p.created_at, u.username 
-            FROM posts p 
-            JOIN users u ON p.user_id = u.user_id 
+            FROM Posts p 
+            JOIN Users u ON p.user_id = u.user_id 
             WHERE u.username LIKE ?
         ";
         $stmt_search = $conn->prepare($search_query);
@@ -152,8 +152,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (!$search_result) {
     $query_posts = "
         SELECT p.post_id, p.content, p.created_at, u.username 
-        FROM posts p 
-        JOIN users u ON p.user_id = u.user_id 
+        FROM Posts p 
+        JOIN Users u ON p.user_id = u.user_id 
         ORDER BY p.created_at DESC
     ";
     $stmt_posts = $conn->prepare($query_posts);
@@ -169,7 +169,7 @@ if (isset($_POST['btn_post'])) {
         $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
         $user_id = $_SESSION['user_id'];
 
-        $query = "INSERT INTO posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())";
+        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("iis", $thread_id, $user_id, $post_content);
 
@@ -182,11 +182,11 @@ if (isset($_POST['btn_post'])) {
         echo "Vui lòng điền đầy đủ thông tin.";
     }
 }
-$query2 = "SELECT * FROM `users`";
+$query2 = "SELECT * FROM `Users`";
 $result2 = mysqli_query($conn, $query2);
 $sltv = mysqli_num_rows($result2);
 
-$query3 = "SELECT * FROM `threads` ORDER BY created_at DESC LIMIT 5";
+$query3 = "SELECT * FROM `Threads` ORDER BY created_at DESC LIMIT 5";
 $result3 = mysqli_query($conn, $query3);
 ?>
 
