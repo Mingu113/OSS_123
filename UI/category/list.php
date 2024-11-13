@@ -89,9 +89,9 @@
             </div>
         </div>
 
-        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Thread name?</a> </span>
+        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Category name?</a> </span>
         <!-- Thay bằng tên của Post -->
-        <h3 class="">Threads name?</h3>
+        <h3 class="">Category name?</h3>
         <div class="d-flex">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
