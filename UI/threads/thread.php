@@ -20,9 +20,10 @@ if ($isLoggedIn) {
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 
-    $profileImage = !empty($user["profile_image"]) ? $user["profile_image"] : "images/default_avatar.png";
+    $profileImage = !empty($user["profile_image"]) ? $user["profile_pic"] : "../images/default.jpg";
 }
-$thread_id = 1;
+if (isset($_GET["id"]))
+    $thread_id = $_GET["id"];
 // Gửi bài post mới
 if (isset($_POST['btn_post'])) {
     if (isset($_POST['postContent'])) {
@@ -49,27 +50,32 @@ if (isset($_POST['btn_post'])) {
         echo "Vui lòng điền đầy đủ thông tin.";
     }
 }
-// Truy vấn để lấy tất cả bài viết
-$query_posts = "
-        SELECT *
-        FROM Posts p, Users u, Threads t
-        WHERE p.thread_id = $thread_id AND u.user_id = p.user_id
+if (isset($thread_id)) {
+
+    // Truy vấn để lấy tất cả bài viết
+    $query_posts = "
+        SELECT DISTINCT p.thread_id, u.username, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
+        FROM Posts p
+        JOIN Users u ON u.user_id = p.user_id
+        JOIN Threads t ON t.thread_id = p.thread_id
+        WHERE p.thread_id = $thread_id
         ORDER BY p.created_at ASC
     ";
-$stmt_posts = $conn->prepare($query_posts);
-$stmt_posts->execute();
-$posts_result = $stmt_posts->get_result();
+    $stmt_posts = $conn->prepare($query_posts);
+    $stmt_posts->execute();
+    $posts_result = $stmt_posts->get_result();
+    if (mysqli_num_rows($posts_result) == 0) {
+        $thread_title = "Không có Thread";
+        $thread_is_available = false;
+    } else {
+        $thread_title = $posts_result->fetch_assoc()["title"];
+        $thread_is_available = true;
+    }
 
-
-$query2 = "SELECT * FROM `Users`";
-$result2 = mysqli_query($conn, $query2);
-$sltv = mysqli_num_rows($result2);
-/// TEST
-$thread_id = 1;
-$query_thread = "SELECT * FROM `Threads` WHERE thread_id = $thread_id";
-$thread_rs = mysqli_query($conn, $query_thread);
-$thread = mysqli_fetch_array($thread_rs);
-///
+    $query2 = "SELECT * FROM `Users`";
+    $result2 = mysqli_query($conn, $query2);
+    $sltv = mysqli_num_rows($result2);
+}
 ?>
 
 <head>
@@ -77,7 +83,7 @@ $thread = mysqli_fetch_array($thread_rs);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <title><?php echo $thread["title"]; ?></title>
+    <title><?php echo $thread_title ?></title>
     <style>
         body {
             background-color: #f8f9fa;
@@ -207,21 +213,27 @@ $thread = mysqli_fetch_array($thread_rs);
             <div class="col-lg-8">
                 <!-- Hiển thị tất cả bài viết hoặc kết quả tìm kiếm -->
                 <?php if (isset($posts_result) && mysqli_num_rows($posts_result) > 0): ?>
-                    <h3><?php echo $thread["title"]; ?></h3>
-                    <?php $post_index = 1; ?>
+                    <h3><?php echo $thread_title; ?></h3>
+                    <?php $post_index = 1;
+                    mysqli_data_seek($posts_result, 0); ?>
                     <?php while ($post = mysqli_fetch_assoc($posts_result)): ?>
                         <div class="post">
                             <div class="post-number">#<?php echo $post_index++; ?></div>
+                            <div style="margin: 10px; margin-right: 25px">
+                                <img src="<?php echo htmlspecialchars($post['profile_pic']) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
+                                    alt="Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+                                <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
+                            </div>
                             <div class="post-content">
-                                <div class="post-title"><?php echo htmlspecialchars($post['username']); ?></div>
                                 <p><?php echo htmlspecialchars($post['content']); ?></p>
                                 <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
                             </div>
                         </div>
+
                     <?php endwhile; ?>
                 <?php endif; ?>
 
-                <?php if ($isLoggedIn): ?>
+                <?php if ($isLoggedIn && isset($thread_id) && $thread_is_available): ?>
                     <!-- Form gửi bài post mới -->
                     <div class="new-post" id="new-post">
                         <h2>Người dùng: <?php echo $username; ?></h2>
@@ -233,6 +245,11 @@ $thread = mysqli_fetch_array($thread_rs);
                             </div>
                             <button type="submit" class="btn btn-primary" name="btn_post">Gửi Bài Post</button>
                         </form>
+                    </div>
+                <?php else: ?>
+                    <div style="text-align: center;">
+                        <img src="../images/not_found.gif" alt="Image" width="60%">
+                        <h1>Không có bài thread này, có thể đã bị xóa hoặc không tồn tại</h1>
                     </div>
                 <?php endif; ?>
             </div>
