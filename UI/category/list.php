@@ -71,6 +71,19 @@
 </head>
 
 <body>
+    <?php
+    require "../authentication/config.php";
+    session_start();
+
+    $threads_ca = $_SESSION["categories_results"]["threads_ca"];
+    $name = $_SESSION["categories_results"]["name"];
+    $total_threads = $_SESSION["categories_results"]["total_threads"];
+    $thread_per_page = $_SESSION["categories_results"]["thread_per_page"];
+    $current_page = $_SESSION["categories_results"]["current_page"];
+
+    // Tính tổng số trang
+    $total_pages = ceil($total_threads / $thread_per_page);
+    ?>
     <div class="container mt-5">
         <div class="header-section d-flex justify-content-between align-items-center mb-4">
             <form class="form-inline">
@@ -89,29 +102,39 @@
             </div>
         </div>
 
-        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Category name?</a> </span>
+        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Thread name?</a>
+        </span>
         <!-- Thay bằng tên của Post -->
-        <h3 class="">Category name?</h3>
+        <h3 class=""><?php echo $name; ?></h3>
         <div class="d-flex">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                            <span class="sr-only">Next</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            <!-- Liên kết phân trang -->
+            <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <?php if ($current_page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="../code/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page - 1; ?>">Trang
+                                    trước</a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?php if ($i == $current_page)
+                                echo 'active'; ?>">
+                                <a class="page-link"
+                                    href="../code/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if ($current_page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="../code/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page + 1; ?>">Trang
+                                    sau</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
 
             <button class="btn post_btn" data-toggle="modal" data-target="#postModal"><i class="bi bi-pencil"></i> Post
                 Thread</button>
@@ -131,38 +154,51 @@
                             </div>
                         </div>
                     </li>
-                    <li class="list-group-item d-flex">
-                        <img src="..." alt="icon" class="my-1 mr-3">
-                        <div class="content-wrapper ">
-                            <a href="#" class="topic-name font-weight-bold">Wibu có phải là đáy xã hội? </a>
-                            <div class=""> <span>username</span> | <span>time</span> | <span>categories</span></div>
-                        </div>
-                    </li>
+                    <?php foreach ($threads_ca as $value): ?>
+                        <li class="list-group-item d-flex">
+                            <img src="..." alt="icon" class="my-1 mr-3">
+                            <div class="content-wrapper ">
+                                <a href="#"
+                                    class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['Title']); ?></a>
+                                <div><span>username</span> |
+                                    <span><?php echo htmlspecialchars($value['created_at']); ?></span>
+                                </div>
+                            </div>
+                        </li>
+                    <?php endforeach ?>
                 </ul>
                 <h3></h3>
-                <nav aria-label="Page navigation example">
+                <nav aria-label="Page navigation">
                     <ul class="pagination">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </li>
+                        <?php if ($current_page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="../code/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page - 1; ?>">Trang
+                                    trước</a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?php if ($i == $current_page)
+                                echo 'active'; ?>">
+                                <a class="page-link"
+                                    href="../code/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if ($current_page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="../code/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page + 1; ?>">Trang
+                                    sau</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </nav>
             </div>
             <div class="col-lg-4">
                 <div class="sidebar">
-                    <h4>Tổng Số Lượng Thread: 100</h4>
+                    <h4><?php echo "Tổng Số Lượng Thread: " . count($threads_ca); ?></h4>
                     </ul>
                     <h4>Kết Nối Với Chúng Tôi</h4>
                     <div>
@@ -183,8 +219,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="postModalLabel">Tạo
-                        bài viết mới</h5>
+                    <h5 class="modal-title" id="postModalLabel">Tạo bài viết mới</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
