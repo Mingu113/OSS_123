@@ -34,15 +34,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $password_check = $_POST["password_check"];
     $major = $_POST["major"];
-    $query = "INSERT INTO users (username, password_hash, email , major) VALUES ('$name', '$password', '$email', '$major')";
+    // Kiểm tra mật khẩu và xác nhận mật khẩu có trùng khớp không
+    if ($password != $password_check) {
+        $msg = "Mật khẩu và xác nhận mật khẩu không khớp.";
+        exit();
+    }
+    $password = hash("sha256", $password);
+    $query = "INSERT INTO Users (username, password_hash, email , major) VALUES ('$name', '$password', '$email', '$major')";
     $result = mysqli_query($conn,$query);
     if(!$result) die ('<br> <b>Query failed</b>');
     else $msg = "Đăng kí tài khoản thành công";
-    // Kiểm tra mật khẩu và xác nhận mật khẩu có trùng khớp không
-    if ($password != $password_check) {
-        echo "Mật khẩu và xác nhận mật khẩu không khớp.";
-        exit();
-    }
 }
 ?>
 
@@ -97,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <select name="major" id="major" class="form-control form-control-lg">
                             <?php
                             // Lấy danh sách chuyên ngành từ bảng majors
-                            $query = "SELECT * FROM majors";
+                            $query = "SELECT * FROM Majors";
                             $result = mysqli_query($conn, $query);
                             if (!$result) die('<br> <b>Query failed</b>');
                             // Lấy và hiển thị danh sách chuyên ngành
