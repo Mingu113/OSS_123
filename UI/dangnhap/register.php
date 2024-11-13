@@ -82,14 +82,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div data-mdb-input-init class="form-outline mb-3">
                         <label class="form-label font-weight-bold" for="form3Example4">Password <span
                                     class="text-danger">*</span></label>
-                        <input type="password" required name="password" value="<?php echo $password ?>" id="form3Example4" class="form-control form-control-lg"
+                        <input type="password" required name="password" id="form3Example4" class="form-control form-control-lg"
                                placeholder="Nhập mật khẩu" />
                     </div>
 
                     <div data-mdb-input-init class="form-outline mb-3">
                         <label class="form-label font-weight-bold" for="form3Example4">Confirm Password <span
                                     class="text-danger">*</span></label>
-                        <input type="password" required name="password_check" value="<?php echo $password_check ?>" id="form3Example4" class="form-control form-control-lg"
+                        <input type="password" required name="password_check" id="form3Example4" class="form-control form-control-lg"
                                placeholder="Nhập lại mật khẩu" />
                     </div>
                     <!-- Major select -->
