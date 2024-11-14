@@ -63,7 +63,10 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-            <?php require "../search/tool.php" ?>
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
             <div>
                 <?php if (!empty($username)): ?>
                     <a href="../nguoidung/user.php" class="mr-3 text-decoration-none">
@@ -89,11 +92,10 @@
                     mysqli_data_seek($result1, 0);
                     while ($row1 = mysqli_fetch_array($result1)) {
                         if ($row["board_id"] == $row1["board_id"]) {
-                            echo "<a href='../category/list.php?name=" . urlencode($row1["name"]) ."&category_id=" . urlencode($row1["category_id"])."' class=\"list-group-item list-group-item-action\">";
+                            echo "<a href='../category/list.php?category_name=" . urlencode($row1["name"]) . "&category_id=" . urlencode($row1["category_id"]) . "' class=\"list-group-item list-group-item-action\">";
                             echo $row1["name"];
                             echo "</a>";
                         }
-
                     }
                     echo "</div>";
                 }
