@@ -71,8 +71,8 @@
 </head>
 
 <body>
-<?php
-    require "../authentication/config.php";
+    <?php
+    require "../../Code/config.php";
     session_start();
     $name = $_GET['name'];
     $category_id = $_GET['category_id'];
