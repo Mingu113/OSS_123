@@ -113,7 +113,7 @@
                         <?php if ($current_page > 1): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page - 1; ?>">Trang
+                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page - 1; ?>">Trang
                                     trước</a>
                             </li>
                         <?php endif; ?>
@@ -122,14 +122,14 @@
                             <li class="page-item <?php if ($i == $current_page)
                                 echo 'active'; ?>">
                                 <a class="page-link"
-                                    href=".../Code/Home/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                             </li>
                         <?php endfor; ?>
 
                         <?php if ($current_page < $total_pages): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page + 1; ?>">Trang
+                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page + 1; ?>">Trang
                                     sau</a>
                             </li>
                         <?php endif; ?>
@@ -173,7 +173,7 @@
                         <?php if ($current_page > 1): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page - 1; ?>">Trang
+                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page - 1; ?>">Trang
                                     trước</a>
                             </li>
                         <?php endif; ?>
@@ -182,14 +182,14 @@
                             <li class="page-item <?php if ($i == $current_page)
                                 echo 'active'; ?>">
                                 <a class="page-link"
-                                    href=".../Code/Home/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                             </li>
                         <?php endfor; ?>
 
                         <?php if ($current_page < $total_pages): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/search.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page + 1; ?>">Trang
+                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page + 1; ?>">Trang
                                     sau</a>
                             </li>
                         <?php endif; ?>
