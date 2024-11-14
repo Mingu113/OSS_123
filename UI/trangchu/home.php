@@ -56,8 +56,6 @@
         logout();
     }
     ?>
-
-
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
         <a class="navbar-brand" href="../trangchu/home.php">NTUCHAN</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -94,7 +92,7 @@
                     mysqli_data_seek($result1, 0);
                     while ($row1 = mysqli_fetch_array($result1)) {
                         if ($row["board_id"] == $row1["board_id"]) {
-                            echo "<a href='../Home/search.php?name=" . urlencode($row1["name"]) . "' class=\"list-group-item list-group-item-action\">";
+                            echo "<a href='...Code/Home/search.php?name=" . urlencode($row1["name"]) . "' class=\"list-group-item list-group-item-action\">";
                             echo $row1["name"];
                             echo "</a>";
                         }
