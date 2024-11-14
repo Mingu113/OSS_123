@@ -72,11 +72,17 @@
 
 <body>
     <?php
-    require "../../Code/config.php";
-    session_start();
-    $name = $_GET['name'];
+    require "./config.php";
+    $name = $_GET["name"];
     $category_id = $_GET['category_id'];
-    $page = $_GET['page'];
+
+    // Tìm kiếm trong bảng categories
+    $search_ca = "SELECT * FROM `Categories` WHERE `name` LIKE '%$name%'";
+    $result_categories = mysqli_query($conn, $search_ca);
+    $category = mysqli_fetch_assoc($result_categories);
+    $category_id = $category["category_id"];
+
+
     // Đếm tổng số threads thuộc category này
     $count_th_ca_query = "SELECT COUNT(*) as total FROM `Threads` WHERE `category_id` = $category_id";
     $count_th_ca_result = mysqli_query($conn, $count_th_ca_query);
@@ -130,32 +136,32 @@
         <div class="d-flex">
             <!-- Liên kết phân trang -->
             <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <?php if ($page > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link"
-                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
-                                    trước</a>
-                            </li>
-                        <?php endif; ?>
+                <ul class="pagination">
+                    <?php if ($page > 1): ?>
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
+                                trước</a>
+                        </li>
+                    <?php endif; ?>
 
-                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <li class="page-item <?php if ($i == $page)
-                                echo 'active'; ?>">
-                                <a class="page-link"
-                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <li class="page-item <?php if ($i == $page)
+                            echo 'active'; ?>">
+                            <a class="page-link"
+                                href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
 
-                        <?php if ($page < $total_pages): ?>
-                            <li class="page-item">
-                                <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $page + 1; ?>">Trang
-                                    sau</a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
+                    <?php if ($page < $total_pages): ?>
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
+                                sau</a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
 
             <button class="btn post_btn" data-toggle="modal" data-target="#postModal"><i class="bi bi-pencil"></i> Post
                 Thread</button>
@@ -219,7 +225,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="sidebar">
-                    <h4><?php echo "Tổng Số Lượng Thread: " . count($threads_ca); ?></h4>
+                    <h4><?php echo "Tổng Số Lượng Thread: " . $total_threads; ?></h4>
                     </ul>
                     <h4>Kết Nối Với Chúng Tôi</h4>
                     <div>

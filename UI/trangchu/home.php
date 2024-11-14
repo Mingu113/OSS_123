@@ -92,7 +92,7 @@
                     mysqli_data_seek($result1, 0);
                     while ($row1 = mysqli_fetch_array($result1)) {
                         if ($row["board_id"] == $row1["board_id"]) {
-                            echo "<a href='...Code/Home/categories.php?name=" . urlencode($row1["name"]) . "' class=\"list-group-item list-group-item-action\">";
+                            echo "<a href='../category/list.php?name=" . urlencode($row1["name"]) ."&category_id=" . urlencode($row1["category_id"])."' class=\"list-group-item list-group-item-action\">";
                             echo $row1["name"];
                             echo "</a>";
                         }
