@@ -41,7 +41,7 @@
     ?>
     <div class="container mt-5">
         <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <form action="../Home/search.php" class="form-inline" method="post">
+            <form action="...Code/Home/search.php" class="form-inline" method="post">
                 <div class="input-group">
                     <input class="form-control" type="search" name="search" placeholder="Tìm kiếm..."
                         aria-label="Search">
@@ -71,7 +71,7 @@
                     mysqli_data_seek($result1, 0);
                     while ($row1 = mysqli_fetch_array($result1)) {
                         if ($row["board_id"] == $row1["board_id"]) {
-                            echo "<a href='../Home/search.php?name=" . urlencode($row1["name"]) . "' class=\"list-group-item list-group-item-action\">";
+                            echo "<a href='...Code/Home/search.php?name=" . urlencode($row1["name"]) . "' class=\"list-group-item list-group-item-action\">";
                             echo $row1["name"];
                             echo "</a>";
                         }
