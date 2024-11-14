@@ -46,6 +46,14 @@
             background-color: #eaebec;
             color: #42628d;
         }
+
+        .col_right {
+        }
+        .post_li {
+            border-radius: 3px;
+            padding: 10px;
+            margin-left: 50px;
+        }
     </style>
 </head>
 
@@ -69,22 +77,21 @@
     } else {
         header("Location: ../trangchu/home.php");
     }
-    
-    
 
     global $user_id;
-    function changeEmail($user_id, $newemail, $password) {
+    function changeEmail($user_id, $newemail, $password)
+    {
         global $conn;
-        
+
         $user_id = mysqli_real_escape_string($conn, $user_id);
         $query = "SELECT password_hash FROM `Users` WHERE user_id = '$user_id'";
         $result = mysqli_query($conn, $query);
         $user = mysqli_fetch_assoc($result);
-        
+
         if ($user && hash("sha256", $password) === $user['password_hash']) {
             $newemail = mysqli_real_escape_string($conn, $newemail);
             $updateQuery = "UPDATE `Users` SET email = '$newemail' WHERE user_id = '$user_id'";
-            
+
             if (mysqli_query($conn, $updateQuery)) {
                 echo "<script>alert('Cập nhật email thành công'); window.location.href='user.php';</script>";
             } else {
@@ -100,9 +107,10 @@
         changeEmail($user_id, $newemail, $password);
     }
 
-    function changePassword($user_id, $old_password, $new_password, $curr_password) {
+    function changePassword($user_id, $old_password, $new_password, $curr_password)
+    {
         global $conn;
-        
+
         if ($new_password !== $curr_password) {
             echo "<script>alert('Mật khẩu mới không khớp'); window.location.href='user.php';</script>";
             return;
@@ -111,12 +119,12 @@
         $query = "SELECT password_hash FROM `Users` WHERE user_id = '$user_id'";
         $result = mysqli_query($conn, $query);
         $user = mysqli_fetch_assoc($result);
-        
+
         if ($user && hash("sha256", $old_password) === $user['password_hash']) {
             $new_password_hash = hash("sha256", $new_password);
             $new_password_hash = mysqli_real_escape_string($conn, $new_password_hash);
             $updateQuery = "UPDATE `Users` SET password_hash = '$new_password_hash' WHERE user_id = '$user_id'";
-            
+
             if (mysqli_query($conn, $updateQuery)) {
                 echo "<script>alert('Cập nhật mật khẩu thành công'); window.location.href='user.php';</script>";
             } else {
@@ -135,6 +143,10 @@
     if (isset($_GET['logout'])) {
         logout();
     }
+
+
+
+
 
 
     ?>
@@ -158,56 +170,83 @@
             </div>
         </div>
     </nav>
-    <div class="container mt-5">
-        <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a
-                    href="../nguoidung/user.php">My Profile</a>
-                <h3>Accout Details</h3>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="tb_profile">
-                    <tr>
-                        <td colspan="2"><img src="<?php echo $profileImage; ?>" class="rounded-circle" width="200"
-                                height="200"></td>
-                    </tr>
-                    <tr>
-                        <td class="font-weight-bold">Username: </td>
-                        <td class="spec_td">
-                            <?php echo $username ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="font-weight-bold">Email: </td>
-                        <td class="spec_td"><?php echo $email ?>
-                            <button class="change_profile" type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target="#changeEmailModalLabel">
-                                Change
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="font-weight-bold">Khoa viện: </td>
-                        <td class="spec_td"><?php
-                        $query = "SELECT major_name
+    <div class="container-fluid mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="header-section d-flex justify-content-between align-items-center mb-4">
+                        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a
+                                href="../nguoidung/user.php">My Profile</a>
+                            <h3>Accout Details</h3>
+                    </div>
+                    <table class="tb_profile">
+                        <tr>
+                            <td colspan="2"><img src="<?php echo $profileImage; ?>" class="rounded-circle" width="200"
+                                    height="200"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">Username: </td>
+                            <td class="spec_td">
+                                <?php echo $username ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">Email: </td>
+                            <td class="spec_td"><?php echo $email ?>
+                                <button class="change_profile" type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#changeEmailModalLabel">
+                                    Change
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">Khoa viện: </td>
+                            <td class="spec_td"><?php
+                            $query = "SELECT major_name
                                 FROM `Users` u
                                 JOIN Majors m ON u.major = m.major_id
                                 WHERE u.user_id = $user_id";
-                        $result = mysqli_query($conn, $query);
-                        if ($result && mysqli_num_rows($result) > 0) {
-                            $major_data = mysqli_fetch_assoc($result);
-                            echo $major_data["major_name"];
+                            $result = mysqli_query($conn, $query);
+                            if ($result && mysqli_num_rows($result) > 0) {
+                                $major_data = mysqli_fetch_assoc($result);
+                                echo $major_data["major_name"];
+                            }
+                            ?></td>
+                        </tr>
+                    </table>
+                    <div class="mt-3">
+                        <button class="btn btn-danger" type="button" data-toggle="modal"
+                            data-target="#changePasswordlModalLabel">Đổi mật khẩu</button>
+                    </div>
+                </div>
+                <div class="col-lg-4 col_right">
+                <div class="header-section d-flex justify-content-between align-items-center mb-4">
+                        
+                    </div>
+                    <h3>Các bài đăng gần đây</h3>
+                    <?php
+                    $query = "SELECT content, created_at FROM Posts WHERE user_id = '$user_id' ORDER BY created_at DESC";
+                    $result = mysqli_query($conn, $query);
+                    if (!$result)
+                        die('<br> <b>Query failed</b>');
+                    $num_files = mysqli_num_fields($result);
+                    if (mysqli_num_rows($result) != 0) {
+                        while ($row = mysqli_fetch_array($result)) {
+                            echo "<ul class='list-group'>";
+                            echo "<li class='post_li mt-3'>";
+                            echo "<a href='#" . urlencode($row["content"]) . "'>" . "Post: ". $row["content"]. "</br>" ." Created At: ".$row["created_at"]. "</a>";
+                            echo "</li>";
+                            echo "</ul>";
                         }
-                        ?></td>
-                    </tr>
-                </table>
-                <div class="mt-3">
-                    <button class="btn btn-danger" type="button" data-toggle="modal"
-                        data-target="#changePasswordlModalLabel">Đổi mật khẩu</button>
+                    } else {
+                        echo 'Không có bài viết nào';
+                    }
+                    ?>
                 </div>
             </div>
         </div>
     </div>
+
     <footer class="text-center text-lg-start mt-5 bg-dark">
         <div class="text-center text-white p-3" style="background-color: rgba(0, 0, 0, 0.2);">
             © 2024 Copyright:
