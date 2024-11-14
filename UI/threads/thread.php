@@ -89,6 +89,52 @@ if (isset($thread_id)) {
             background-color: #f8f9fa;
         }
 
+        .post {
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .post-content {
+            flex-grow: 1;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .post-content p {
+            margin: 0;
+            padding: 0;
+            word-wrap: break-word;
+        }
+
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: auto;
+            align-self: flex-end;
+        }
+
+        .post-number {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+
+
         .header-section {
             margin-bottom: 20px;
         }
@@ -110,20 +156,8 @@ if (isset($thread_id)) {
             position: relative;
         }
 
-        .post-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
-
         .post-content {
             flex-grow: 1;
-        }
-
-        .post-title {
-            font-weight: bold;
-            margin-bottom: 5px;
         }
 
         .post-meta {
@@ -140,17 +174,13 @@ if (isset($thread_id)) {
             color: #007bff;
         }
 
-        .sidebar {
-            background-color: #ffffff;
-            border: 1px solid #dddddd;
+        .post-content {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
             border-radius: 5px;
             padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .thread-meta {
-            font-size: 0.9rem;
-            color: #6c757d;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .new-post {
@@ -221,15 +251,14 @@ if (isset($thread_id)) {
                             <div class="post-number">#<?php echo $post_index++; ?></div>
                             <div style="margin: 10px; margin-right: 25px">
                                 <img src="<?php echo htmlspecialchars($post['profile_pic']) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
-                                    alt="Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+                                     alt="Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
                                 <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
                             </div>
                             <div class="post-content">
                                 <p><?php echo htmlspecialchars($post['content']); ?></p>
-                                <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
                             </div>
+                            <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
                         </div>
-
                     <?php endwhile; ?>
                 <?php endif; ?>
 
