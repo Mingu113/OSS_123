@@ -74,15 +74,36 @@
     <?php
     require "../../Code/config.php";
     session_start();
+    $name = $_GET['name'];
+    $category_id = $_GET['category_id'];
+    $page = $_GET['page'];
+    // Đếm tổng số threads thuộc category này
+    $count_th_ca_query = "SELECT COUNT(*) as total FROM `Threads` WHERE `category_id` = $category_id";
+    $count_th_ca_result = mysqli_query($conn, $count_th_ca_query);
+    $total_threads = mysqli_fetch_assoc($count_th_ca_result)['total'];
 
-    $threads_ca = $_SESSION["categories_results"]["threads_ca"];
-    $name = $_SESSION["categories_results"]["name"];
-    $total_threads = $_SESSION["categories_results"]["total_threads"];
-    $thread_per_page = $_SESSION["categories_results"]["thread_per_page"];
-    $current_page = $_SESSION["categories_results"]["current_page"];
+    // Số lượng threads mỗi trang
+    $threads_per_page = 10;
+
+    // Số trang hiện tại từ URL hoặc mặc định là 1
+    $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+    if ($page < 1)
+        $page = 1;
+
+    // Tính vị trí cho LIMIT
+    $offset = ($page - 1) * $threads_per_page;
+
+    // Truy vấn threads theo giới hạn
+    $search_th_ca = "SELECT * FROM `Threads` WHERE `category_id` = $category_id LIMIT $offset, $threads_per_page";
+    $result_threads_ca = mysqli_query($conn, $search_th_ca);
+    $threads_ca = [];
+    while ($thread = mysqli_fetch_assoc($result_threads_ca)) {
+        $threads_ca[] = $thread;
+    }
+
 
     // Tính tổng số trang
-    $total_pages = ceil($total_threads / $thread_per_page);
+    $total_pages = ceil($total_threads / $threads_per_page);
     ?>
     <div class="container mt-5">
         <div class="header-section d-flex justify-content-between align-items-center mb-4">
@@ -110,26 +131,26 @@
             <!-- Liên kết phân trang -->
             <nav aria-label="Page navigation">
                     <ul class="pagination">
-                        <?php if ($current_page > 1): ?>
+                        <?php if ($page > 1): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page - 1; ?>">Trang
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
                                     trước</a>
                             </li>
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <li class="page-item <?php if ($i == $current_page)
+                            <li class="page-item <?php if ($i == $page)
                                 echo 'active'; ?>">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                             </li>
                         <?php endfor; ?>
 
-                        <?php if ($current_page < $total_pages): ?>
+                        <?php if ($page < $total_pages): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page + 1; ?>">Trang
+                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $page + 1; ?>">Trang
                                     sau</a>
                             </li>
                         <?php endif; ?>
@@ -170,26 +191,26 @@
                 <h3></h3>
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
-                        <?php if ($current_page > 1): ?>
+                        <?php if ($page > 1): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page - 1; ?>">Trang
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
                                     trước</a>
                             </li>
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <li class="page-item <?php if ($i == $current_page)
+                            <li class="page-item <?php if ($i == $page)
                                 echo 'active'; ?>">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                             </li>
                         <?php endfor; ?>
 
-                        <?php if ($current_page < $total_pages): ?>
+                        <?php if ($page < $total_pages): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $current_page + 1; ?>">Trang
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
                                     sau</a>
                             </li>
                         <?php endif; ?>

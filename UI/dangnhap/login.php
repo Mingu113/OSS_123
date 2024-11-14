@@ -66,7 +66,7 @@ $conn->close();
                     </div>
                     <div class="divider d-flex align-items-center my-4">
                         <p class="text-center fw-bold mx-3 mb-0">
-                            <a href="home.php"><img class="logo" src="images/Logo_NTU.png" alt=""></a>
+                            <a href="../trangchu/home.php"><img class="logo" src="images/Logo_NTU.png" alt=""></a>
                         </p>
                     </div>
 
