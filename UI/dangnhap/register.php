@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Title</title>
+    <title>Đăng ký</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap CSS -->
@@ -25,7 +25,8 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
-    $name = $password = $email = $password_check = $major = $msg = null;
+    $name = $password = $email = $password_check = $major = null;
+    $msg = "";
 // Kiểm tra nếu form đã được gửi
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Lấy dữ liệu từ form
@@ -34,16 +35,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $password_check = $_POST["password_check"];
     $major = $_POST["major"];
+    $valid = true;
+    $email = ($email == '') ? null : $email;
+    $major = ($major == '') ? null : $major;
+    
     // Kiểm tra mật khẩu và xác nhận mật khẩu có trùng khớp không
     if ($password != $password_check) {
         $msg = "Mật khẩu và xác nhận mật khẩu không khớp.";
-        exit();
+        $valid = false;
     }
-    $password = hash("sha256", $password);
-    $query = "INSERT INTO Users (username, password_hash, email , major) VALUES ('$name', '$password', '$email', '$major')";
-    $result = mysqli_query($conn,$query);
-    if(!$result) die ('<br> <b>Query failed</b>');
-    else $msg = "Đăng kí tài khoản thành công";
+    $query = "SELECT * FROM Users WHERE (username = '$name' OR email = '$email') AND email IS NOT NULL";
+    $result = mysqli_query($conn, $query);
+    if(mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_array($result);
+        if($row['username'] == $name) $msg = $msg . "Người dùng đã tồn tại";
+        if($row['email'] == $email) $msg = $msg . "Email đã được sử dụng";
+        $valid = false;
+    }
+    
+    // Process
+    if($valid) {
+        $password = hash("sha256", $password);
+        $query = "INSERT INTO Users (username, password_hash, email , major) VALUES (?,?,?,?)";
+        $data = [$name, $password, $email, $major];
+        $conn->prepare($query)->execute($data);
+        if(!$conn) die ('<br> <b>Query failed</b>');
+        else $msg = "Đăng kí tài khoản thành công"; 
+    }
 }
 ?>
 
@@ -82,20 +100,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div data-mdb-input-init class="form-outline mb-3">
                         <label class="form-label font-weight-bold" for="form3Example4">Password <span
                                     class="text-danger">*</span></label>
-                        <input type="password" required name="password" value="<?php echo $password ?>" id="form3Example4" class="form-control form-control-lg"
+                        <input type="password" required name="password" id="form3Example4" class="form-control form-control-lg"
                                placeholder="Nhập mật khẩu" />
                     </div>
 
                     <div data-mdb-input-init class="form-outline mb-3">
                         <label class="form-label font-weight-bold" for="form3Example4">Confirm Password <span
                                     class="text-danger">*</span></label>
-                        <input type="password" required name="password_check" value="<?php echo $password_check ?>" id="form3Example4" class="form-control form-control-lg"
+                        <input type="password" required name="password_check" id="form3Example4" class="form-control form-control-lg"
                                placeholder="Nhập lại mật khẩu" />
                     </div>
                     <!-- Major select -->
                     <div data-mdb-input-init class="form-outline mb-3">
                         <label class="form-label font-weight-bold" for="major">Major</label>
                         <select name="major" id="major" class="form-control form-control-lg">
+                            <option value="">Chọn khoa</option>
                             <?php
                             // Lấy danh sách chuyên ngành từ bảng majors
                             $query = "SELECT * FROM Majors";

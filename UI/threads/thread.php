@@ -1,12 +1,89 @@
 <!doctype html>
 <html lang="en">
 
+<?php
+session_start(); // Khởi động session để theo dõi trạng thái đăng nhập
+$user_id = $_SESSION["user_id"];
+
+require "../trangchu/config.php";
+// Kiểm tra nếu người dùng đã đăng nhập
+$isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
+
+if ($isLoggedIn) {
+    $username = $_SESSION["username"];
+
+    // Truy vấn để lấy thông tin người dùng (bao gồm ảnh đại diện nếu có)
+    $query = "SELECT * FROM Users WHERE username = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    $profileImage = !empty($user["profile_image"]) ? $user["profile_pic"] : "../images/default.jpg";
+}
+if (isset($_GET["id"]))
+    $thread_id = $_GET["id"];
+// Gửi bài post mới
+if (isset($_POST['btn_post'])) {
+    if (isset($_POST['postContent'])) {
+        $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
+        $user_id = $_SESSION["user_id"];
+        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("iis", $thread_id, $user_id, $post_content);
+        // Move the old place
+        // PHP block to echo JavaScript
+        echo '<script>
+        window.onload = function() {
+            const targetElement = document.getElementById("new-post");
+            targetElement.scrollIntoView({ behavior: "smooth" });
+        };
+    </script>';
+
+        if ($stmt->execute()) {
+            echo "Bài viết đã được thêm thành công!";
+        } else {
+            echo "Lỗi khi thêm bài viết: " . $stmt->error;
+        }
+    } else {
+        echo "Vui lòng điền đầy đủ thông tin.";
+    }
+}
+if (isset($thread_id)) {
+
+    // Truy vấn để lấy tất cả bài viết
+    $query_posts = "
+        SELECT DISTINCT p.thread_id, u.username, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
+        FROM Posts p
+        JOIN Users u ON u.user_id = p.user_id
+        JOIN Threads t ON t.thread_id = p.thread_id
+        WHERE p.thread_id = $thread_id
+        ORDER BY p.created_at ASC
+    ";
+    $stmt_posts = $conn->prepare($query_posts);
+    $stmt_posts->execute();
+    $posts_result = $stmt_posts->get_result();
+    if (mysqli_num_rows($posts_result) == 0) {
+        $thread_title = "Không có Thread";
+        $thread_is_available = false;
+    } else {
+        $thread_title = $posts_result->fetch_assoc()["title"];
+        $thread_is_available = true;
+    }
+
+    $query2 = "SELECT * FROM `Users`";
+    $result2 = mysqli_query($conn, $query2);
+    $sltv = mysqli_num_rows($result2);
+}
+?>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <title>Trang Chủ Diễn Đàn</title>
+    <title><?php echo $thread_title ?></title>
     <style>
         body {
             background-color: #f8f9fa;
@@ -100,25 +177,14 @@
         }
     </style>
 </head>
-<?php
-    require "../trangchu/config.php";
 
-?>
-
-<?php
-    $query2 = "SELECT * FROM `users`";
-    $result2 = mysqli_query($conn, $query2);
-    $sltv = mysqli_num_rows($result2);
-
-    $query3 = "SELECT * FROM `threads` ORDER BY created_at DESC LIMIT 5";
-    $result3 = mysqli_query($conn, $query3);
-?>
 <body>
     <div class="container mt-5">
         <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <form action="../Home/search.php" class="form-inline" method="post">
+            <form action="" class="form-inline" method="post">
                 <div class="input-group">
-                    <input class="form-control" type="search" name="search" placeholder="Tìm kiếm..." aria-label="Search">
+                    <input class="form-control" type="search" name="search" placeholder="Tìm kiếm..."
+                        aria-label="Search">
                     <div class="input-group-append">
                         <button class="btn btn-outline-success" type="submit" name="btn_search">
                             <i class="fas fa-search"></i>
@@ -127,95 +193,68 @@
                 </div>
             </form>
             <div>
-                <a href="#" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
-                <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                <?php if ($isLoggedIn): ?>
+                    <!-- Hiển thị ảnh đại diện và tên tài khoản nếu đã đăng nhập -->
+                    <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
+                    <span><?php echo htmlspecialchars($username); ?></span>
+                    <a href="../dangnhap/logout.php" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng
+                        Xuất</a>
+                <?php else: ?>
+                    <!-- Hiển nút Đăng Nhập nếu chưa đăng nhập -->
+                    <a href="../dangnhap/login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
+                    <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                <?php endif; ?>
             </div>
         </div>
 
-        <h1 class="text-center">Diễn Đàn Hỏi Đáp</h1>
+        <h1 class="text-center">NTUCHAN</h1>
 
         <div class="row">
             <div class="col-lg-8">
-                <div class="thread-title">
-                    <h2>Tiêu đề Thread</h2>
-                    <p class="thread-meta">
-                        <span>Loại: <strong>Category Name</strong></span> | 
-                        <span>Thời gian: <strong>2024-11-13 10:00</strong></span>
-                    </p>
-                </div>
-
-                <div class="post">
-                    <div class="post-number">#1</div>
-                    <img src="https://via.placeholder.com/50" alt="Avatar" class="post-avatar">
-                    <div class="post-content">
-                        <div class="post-title">Nguyễn Văn A</div>
-                        <p>Nội dung bài post 1. Đây là nơi người dùng có thể chia sẻ ý kiến hoặc câu trả lời của họ.</p>
-                        <p class="post-meta">Thời gian: <strong>2024-11-13 12:00</strong></p>
-                    </div>
-                </div>
-
-                <div class="post">
-                    <div class="post-number">#2</div>
-                    <img src="https://via.placeholder.com/50" alt="Avatar" class="post-avatar">
-                    <div class="post-content">
-                        <div class="post-title">Trần Thị B</div>
-                        <p>Nội dung bài post 2. Thông tin bổ sung hoặc phản hồi từ người dùng khác có thể được hiển thị ở đây.</p>
-                        <p class="post-meta">Thời gian: <strong>2024-11-13 12:30</strong></p>
-                    </div>
-                </div>
-
-                <div class="post">
-                    <div class="post-number">#3</div>
-                    <img src="https://via.placeholder.com/50" alt="Avatar" class="post-avatar">
-                    <div class="post-content">
-                        <div class="post-title">Lê Văn C</div>
-                        <p>Nội dung bài post 3. Bạn có thể thêm nhiều nội dung khác nhau để phong phú diễn đàn.</p>
-                        <p class="post-meta">Thời gian: <strong>2024-11-13 13:00</strong></p>
-                    </div>
-                </div>
-
-                <div class="new-post">
-                    <h3>Viết Bài Post Mới</h3>
-                    <form>
-                        <div class="form-group">
-                            <label for="postContent">Nội dung bài post</label>
-                            <textarea class="form-control" id="postContent" rows="4" placeholder="Nhập nội dung bài post..."></textarea>
+                <!-- Hiển thị tất cả bài viết hoặc kết quả tìm kiếm -->
+                <?php if (isset($posts_result) && mysqli_num_rows($posts_result) > 0): ?>
+                    <h3><?php echo $thread_title; ?></h3>
+                    <?php $post_index = 1;
+                    mysqli_data_seek($posts_result, 0); ?>
+                    <?php while ($post = mysqli_fetch_assoc($posts_result)): ?>
+                        <div class="post">
+                            <div class="post-number">#<?php echo $post_index++; ?></div>
+                            <div style="margin: 10px; margin-right: 25px">
+                                <img src="<?php echo htmlspecialchars($post['profile_pic']) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
+                                    alt="Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+                                <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
+                            </div>
+                            <div class="post-content">
+                                <p><?php echo htmlspecialchars($post['content']); ?></p>
+                                <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Gửi Bài Post</button>
-                    </form>
-                </div>
-            </div>
 
-            <div class="col-lg-4">
-                <div class="sidebar">
-                    <h3>Tổng Số Người Sử Dụng</h3>
-                    <?php echo "<p>" . $sltv . " Thành viên </p>" ?>
-                    <h3>Bình Luận Mới Nhất</h3>
-                    <ul class="list-unstyled">
-                        <?php
-                        while ($row = mysqli_fetch_array($result3)) {
-                            echo "<li>";
-                            echo $row["Title"];
-                            echo "</li>";
-                        }
-                        ?>
-                    </ul>
+                    <?php endwhile; ?>
+                <?php endif; ?>
 
-                    <h3>Kết Nối Với Chúng Tôi</h3>
-                    <div>
-                        <a href="#"><img src="https://img.icons8.com/ios-filled/24/000000/facebook-new.png"
-                                alt="Facebook" /></a>
-                        <a href="#"><img src="https://img.icons8.com/ios-filled/24/000000/zalo.png" alt="Zalo" /></a>
-                        <a href="#"><img src="https://img.icons8.com/ios-filled/24/000000/twitter.png"
-                                alt="Twitter" /></a>
-                        <a href="#"><img src="https://img.icons8.com/ios-filled/24/000000/instagram-new.png"
-                                alt="Instagram" /></a>
+                <?php if ($isLoggedIn && isset($thread_id) && $thread_is_available): ?>
+                    <!-- Form gửi bài post mới -->
+                    <div class="new-post" id="new-post">
+                        <h2>Người dùng: <?php echo $username; ?></h2>
+                        <h3>Viết Bài Post Mới</h3>
+                        <form method="post" action="">
+                            <div class="form-group">
+                                <textarea class="form-control" id="postContent" name="postContent" rows="4"
+                                    placeholder="Nhập nội dung bài post..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" name="btn_post">Gửi Bài Post</button>
+                        </form>
                     </div>
-                </div>
+                <?php else: ?>
+                    <div style="text-align: center;">
+                        <img src="../images/not_found.gif" alt="Image" width="60%">
+                        <h1>Không có bài thread này, có thể đã bị xóa hoặc không tồn tại</h1>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
