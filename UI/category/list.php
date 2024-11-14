@@ -72,7 +72,7 @@
 
 <body>
     <?php
-    require "../authentication/config.php";
+    require "../../Code/config.php";
     session_start();
 
     $threads_ca = $_SESSION["categories_results"]["threads_ca"];
