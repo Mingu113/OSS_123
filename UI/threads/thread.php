@@ -20,7 +20,7 @@ if ($isLoggedIn) {
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 
-    $profileImage = !empty($user["profile_image"]) ? $user["profile_pic"] : "../images/default.jpg";
+    $profileImage = !empty($user["profile_pic"]) ? $user["profile_pic"] : "../images/default.jpg";
 }
 if (isset($_GET["id"]))
     $thread_id = $_GET["id"];
@@ -72,7 +72,6 @@ if (isset($_POST['btn_post'])) {
         $stmt = $conn->prepare($query);
         $stmt->bind_param("iis", $thread_id, $user_id, $post_content);
         // Move the old place
-        // PHP block to echo JavaScript
         echo '<script>
         window.onload = function() {
             const targetElement = document.getElementById("new-post");
@@ -222,7 +221,7 @@ if (isset($_POST['btn_post'])) {
 
         <div class="row">
             <div class="col-lg-8">
-                <!-- Hiển thị tất cả bài viết hoặc kết quả tìm kiếm -->
+                <!-- Hiển thị tất cả bài viết-->
                 <?php if (isset($posts_result) && mysqli_num_rows($posts_result) > 0): ?>
                     <h3><?php echo $thread_title; ?></h3>
                     <?php $post_index = 1;
@@ -242,6 +241,7 @@ if (isset($_POST['btn_post'])) {
                         </div>
 
                     <?php endwhile; ?>
+                    <?php echo $post_index;?>
                 <?php endif; ?>
 
                 <?php if ($isLoggedIn && isset($thread_id) && $thread_is_available): ?>
@@ -254,7 +254,7 @@ if (isset($_POST['btn_post'])) {
                                 <textarea class="form-control" id="postContent" name="postContent" rows="4"
                                     placeholder="Nhập nội dung bài post..."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary" name="btn_post">Gửi Bài Post</button>
+                            <button type="submit" class="btn btn-primary" name="btn_post">Đăng</button>
                         </form>
                     </div>
                 <?php else: ?>

@@ -44,7 +44,8 @@
         }
 
         .post_btn {
-            margin-left: 435px;
+            margin-left: auto;
+            margin-right: 0;
             background-color: orange;
             color: white;
             height: 40px;
@@ -67,12 +68,58 @@
         .li_nav {
             background-color: #f1f8fd;
         }
+
+        .post-input {
+            width: 100%;
+        }
     </style>
 </head>
 
 <body>
     <?php
     require "./config.php";
+
+    session_start();
+    $isLoggedIn = isset($_SESSION["user_id"]);
+    if ($isLoggedIn) {
+        $username = $_SESSION["username"];
+
+        // Truy vấn để lấy thông tin người dùng (bao gồm ảnh đại diện nếu có)
+        $query = "SELECT * FROM Users WHERE username = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+
+        $profileImage = !empty($user["profile_pic"]) ? $user["profile_pic"] : "../images/default.jpg";
+    }
+
+
+    // Post thread function
+    if (isset($_POST["post-thread"]) && isset($_SESSION["user_id"])) {
+        $category_id = $_POST["category_id"];
+        $title = $_POST["thread_title"];
+        $content = $_POST["post_content"];
+        $user_id = $_SESSION["user_id"];
+
+        $query_thread =
+            "INSERT INTO Threads (`title`, `category_id`, `created_at`) 
+        VALUES ('$title', '$category_id', current_timestamp()) ;";
+        mysqli_query($conn, $query_thread);
+        $new_thread_id = mysqli_insert_id($conn);
+        $query_post_thread = "INSERT INTO Posts (`thread_id`, `user_id`, `content`, `created_at`) VALUES ('$new_thread_id', '$user_id', '$content', current_timestamp()) ;";
+        $result_post = mysqli_query($conn, $query_post_thread);
+        if (!$result_post) {
+            // Thong bao ra cho nguoi dung
+            echo "Khong thanh cong";
+        } else {
+            header("Location: ../threads/thread.php?id=$new_thread_id");
+        }
+    }
+
+
+
     $name = $_GET["name"];
     $category_id = $_GET['category_id'];
 
@@ -100,16 +147,32 @@
     $offset = ($page - 1) * $threads_per_page;
 
     // Truy vấn threads theo giới hạn
-    $search_th_ca = "SELECT * FROM `Threads` WHERE `category_id` = $category_id LIMIT $offset, $threads_per_page";
+    $search_th_ca =
+        "SELECT t.thread_id, t.title, t.category_id, t.created_at, t.newest_post_at, t.posts_count, t.is_pinned, u.profile_pic, u.username
+    FROM Threads t
+    LEFT JOIN 
+    Posts p ON t.thread_id = p.thread_id
+    LEFT JOIN 
+    Users u ON p.user_id = u.user_id
+    WHERE 
+    p.post_id = (
+        SELECT MIN(p2.post_id) 
+        FROM Posts p2 
+        WHERE p2.thread_id = t.thread_id
+    )
+    AND t.category_id = $category_id
+    LIMIT $offset, $threads_per_page";
+
     $result_threads_ca = mysqli_query($conn, $search_th_ca);
     $threads_ca = [];
     while ($thread = mysqli_fetch_assoc($result_threads_ca)) {
         $threads_ca[] = $thread;
     }
 
-
     // Tính tổng số trang
     $total_pages = ceil($total_threads / $threads_per_page);
+
+
     ?>
     <div class="container mt-5">
         <div class="header-section d-flex justify-content-between align-items-center mb-4">
@@ -124,12 +187,19 @@
                 </div>
             </form>
             <div>
-                <a href="#" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
-                <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                <?php if ($isLoggedIn): ?>
+                    <!-- Hiển thị ảnh đại diện và tên tài khoản nếu đã đăng nhập -->
+                    <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
+                    <span><?php echo htmlspecialchars($username); ?></span>
+                <?php else: ?>
+                    <!-- Hiển nút Đăng Nhập nếu chưa đăng nhập -->
+                    <a href="../dangnhap/login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
+                    <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                <?php endif; ?>
             </div>
         </div>
 
-        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Thread name?</a>
+        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#"><?php echo $name; ?></a>
         </span>
         <!-- Thay bằng tên của Post -->
         <h3 class=""><?php echo $name; ?></h3>
@@ -162,66 +232,75 @@
                     <?php endif; ?>
                 </ul>
             </nav>
-
-            <button class="btn post_btn" data-toggle="modal" data-target="#postModal"><i class="bi bi-pencil"></i> Post
-                Thread</button>
+            <?php if ($isLoggedIn): ?>
+                <button class="btn post_btn" data-toggle="modal" data-target="#postModal"><i class="bi bi-pencil"></i> Post
+                    Thread</button>
+            <?php endif; ?>
         </div>
         <div class="row">
             <div class="col-lg-8">
-                <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-end li_nav">
-                        <div class="dropdown">
-                            <button class="dropdown-toggle filter_btn" type="button" id="dropdownMenuButton"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Sort
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <button class="dropdown-item">Bài đăng mới nhất</button>
-                                <button class="dropdown-item">Bình luận mới nhất</button>
-                            </div>
-                        </div>
-                    </li>
-                    <?php foreach ($threads_ca as $value): ?>
-                        <li class="list-group-item d-flex">
-                            <img src="..." alt="icon" class="my-1 mr-3">
-                            <div class="content-wrapper ">
-                                <a href="#"
-                                    class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['Title']); ?></a>
-                                <div><span>username</span> |
-                                    <span><?php echo htmlspecialchars($value['created_at']); ?></span>
+                <?php if (isset($name) && isset($category_id)): ?>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-end li_nav">
+                            <div class="dropdown">
+                                <button class="dropdown-toggle filter_btn" type="button" id="dropdownMenuButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Sort
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <button class="dropdown-item">Bài đăng mới nhất</button>
+                                    <button class="dropdown-item">Bình luận mới nhất</button>
                                 </div>
                             </div>
                         </li>
-                    <?php endforeach ?>
-                </ul>
-                <h3></h3>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <?php if ($page > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link"
-                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
-                                    trước</a>
+                        <?php foreach ($threads_ca as $value): ?>
+                            <li class="list-group-item d-flex">
+                                <img src="<?php echo !empty($value["profile_pic"]) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
+                                    class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
+                                <div class="content-wrapper ">
+                                    <a href="../threads/thread.php?id=<?php echo $value["thread_id"]; ?>"
+                                        class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['title']); ?></a>
+                                    <div><span> <?php echo $value["username"] ?></span> |
+                                        <span><?php echo htmlspecialchars($value['created_at']); ?></span>
+                                    </div>
+                                </div>
                             </li>
-                        <?php endif; ?>
-
-                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <li class="page-item <?php if ($i == $page)
-                                echo 'active'; ?>">
-                                <a class="page-link"
-                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
-
-                        <?php if ($page < $total_pages): ?>
-                            <li class="page-item">
-                                <a class="page-link"
-                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
-                                    sau</a>
-                            </li>
-                        <?php endif; ?>
+                        <?php endforeach ?>
                     </ul>
-                </nav>
+                    <h3></h3>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <?php if ($page > 1): ?>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
+                                        trước</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <li class="page-item <?php if ($i == $page)
+                                    echo 'active'; ?>">
+                                    <a class="page-link"
+                                        href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <?php if ($page < $total_pages): ?>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
+                                        sau</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
+                <?php else: ?>
+                    <div style="text-align: center;">
+                        <img src="../images/not_found.gif" alt="Image" width="60%">
+                        <h1>Không có bài thread này, có thể đã bị xóa hoặc không tồn tại</h1>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="col-lg-4">
                 <div class="sidebar">
@@ -252,22 +331,20 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form method="post">
                         <div class="form-group">
+                            <input hidden name="category_id" value="<?php echo $category_id; ?>">
                             <label for="title">Tiêu đề</label>
-                            <input type="text" class="form-control" id="title" placeholder="Nhập tiêu đề">
+                            <input type="text" class="form-control" required id="title" name="thread_title"
+                                placeholder="Nhập tiêu đề">
                         </div>
                         <div class="form-group">
-                            <label for="title">Chủ đề</label>
-                            <select name="" id="">
-                                <option value="">Lấy giá trị từ db</option>
-                                <option value="">Lấy giá trị từ db</option>
-                                <option value="">Lấy giá trị từ db</option>
-                            </select>
+                            <textarea id="post-input" class="post-input" name="post_content" required
+                                placeholder="Nhập nội dung bài viết" rows="4"></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-primary">Đăng
+                            <button type="submit" name="post-thread" class="btn btn-primary">Đăng
                                 bài</button>
                         </div>
                     </form>
