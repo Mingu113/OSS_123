@@ -73,21 +73,19 @@
     
 
     global $user_id;
-    function changeEmail($user_id, $newemail, $password)
-    {
+    function changeEmail($user_id, $newemail, $password) {
         global $conn;
-        $query = "SELECT password_hash FROM `Users` WHERE user_id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
-
+        
+        $user_id = mysqli_real_escape_string($conn, $user_id);
+        $query = "SELECT password_hash FROM `Users` WHERE user_id = '$user_id'";
+        $result = mysqli_query($conn, $query);
+        $user = mysqli_fetch_assoc($result);
+        
         if ($user && hash("sha256", $password) === $user['password_hash']) {
-            $updateQuery = "UPDATE `Users` SET email = ? WHERE user_id = ?";
-            $stmt = $conn->prepare($updateQuery);
-            $stmt->bind_param("si", $newemail, $user_id);
-            if ($stmt->execute()) {
+            $newemail = mysqli_real_escape_string($conn, $newemail);
+            $updateQuery = "UPDATE `Users` SET email = '$newemail' WHERE user_id = '$user_id'";
+            
+            if (mysqli_query($conn, $updateQuery)) {
                 echo "<script>alert('Cập nhật email thành công'); window.location.href='user.php';</script>";
             } else {
                 echo "<script>alert('Có lỗi xảy ra khi cập nhật email'); window.location.href='user.php';</script>";
@@ -102,27 +100,24 @@
         changeEmail($user_id, $newemail, $password);
     }
 
-    function changePassword($user_id, $old_password, $new_password, $curr_password)
-    {
+    function changePassword($user_id, $old_password, $new_password, $curr_password) {
         global $conn;
+        
         if ($new_password !== $curr_password) {
             echo "<script>alert('Mật khẩu mới không khớp'); window.location.href='user.php';</script>";
             return;
         }
-        $query = "SELECT password_hash FROM `Users` WHERE user_id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
-
+        $user_id = mysqli_real_escape_string($conn, $user_id);
+        $query = "SELECT password_hash FROM `Users` WHERE user_id = '$user_id'";
+        $result = mysqli_query($conn, $query);
+        $user = mysqli_fetch_assoc($result);
+        
         if ($user && hash("sha256", $old_password) === $user['password_hash']) {
             $new_password_hash = hash("sha256", $new_password);
-            $updateQuery = "UPDATE `Users` SET password_hash = ? WHERE user_id = ?";
-            $stmt = $conn->prepare($updateQuery);
-            $stmt->bind_param("si", $new_password_hash, $user_id);
-
-            if ($stmt->execute()) {
+            $new_password_hash = mysqli_real_escape_string($conn, $new_password_hash);
+            $updateQuery = "UPDATE `Users` SET password_hash = '$new_password_hash' WHERE user_id = '$user_id'";
+            
+            if (mysqli_query($conn, $updateQuery)) {
                 echo "<script>alert('Cập nhật mật khẩu thành công'); window.location.href='user.php';</script>";
             } else {
                 echo "<script>alert('Có lỗi xảy ra khi cập nhật mật khẩu'); window.location.href='user.php';</script>";
