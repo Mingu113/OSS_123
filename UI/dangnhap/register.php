@@ -79,35 +79,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     <div class="divider d-flex align-items-center my-4">
                         <p class="text-center fw-bold mx-3 mb-0">
-                            <a href="home.php"><img class="logo" src="images/Logo_NTU.png" alt=""></a>
+                            <a href="../trangchu/home.php"><img class="logo" src="images/Logo_NTU.png" alt=""></a>
                         </p>
                     </div>
 
                     <!-- Username input -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <label class="form-label font-weight-bold" for="form3Example3">Username <span
-                                    class="text-danger">*</span></label>
+                                    class="text-danger">*</span></label> <small>Chỉ các chữ cái tiếng Anh, không khoảng trắng hoặc kí tự đặc biệt</small>
                         <input name="name" required type="text" value="<?php echo $name ?>" id="form3Example3" class="form-control form-control-lg"
-                               placeholder="Nhập tài khoản" />
+                               placeholder="Nhập tài khoản" pattern="^[A-Za-z0-9]+$" />
                     </div>
 
                     <div data-mdb-input-init class="form-outline mb-4">
                         <label class="form-label font-weight-bold" for="form3Example3">Email</label>
-                        <input name="email" type="text" id="form3Example3" value="<?php echo $email ?>" class="form-control form-control-lg" placeholder="Nhập email"  />
+                        <input name="email" type="email" id="form3Example3" value="<?php echo $email ?>" class="form-control form-control-lg" placeholder="Nhập email"/>
                     </div>
 
                     <!-- Password input -->
                     <div data-mdb-input-init class="form-outline mb-3">
                         <label class="form-label font-weight-bold" for="form3Example4">Password <span
-                                    class="text-danger">*</span></label>
-                        <input type="password" required name="password" id="form3Example4" class="form-control form-control-lg"
+                                    class="text-danger">*</span></label> <small>Chỉ các chữ cái tiếng Anh, không khoảng trắng hoặc kí tự đặc biệt</small>
+                        <input type="password" required name="password" pattern="^[A-Za-z0-9]+$"  id="form3Example4" class="form-control form-control-lg"
                                placeholder="Nhập mật khẩu" />
                     </div>
 
                     <div data-mdb-input-init class="form-outline mb-3">
                         <label class="form-label font-weight-bold" for="form3Example4">Confirm Password <span
-                                    class="text-danger">*</span></label>
-                        <input type="password" required name="password_check" id="form3Example4" class="form-control form-control-lg"
+                                    class="text-danger">*</span></label> <small>Chỉ các chữ cái tiếng Anh, không khoảng trắng hoặc kí tự đặc biệt</small>
+                        <input type="password" required name="password_check" pattern="^[A-Za-z0-9]+$" id="form3Example4" class="form-control form-control-lg"
                                placeholder="Nhập lại mật khẩu" />
                     </div>
                     <!-- Major select -->
