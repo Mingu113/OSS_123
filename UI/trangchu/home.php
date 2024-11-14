@@ -15,6 +15,12 @@
         .header-section {
             margin-bottom: 20px;
         }
+
+        .user_avatar {
+            background-color: antiquewhite;
+            padding: 0px 5px 0px 5px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 
@@ -23,9 +29,11 @@
     require "config.php";
     session_start(); // start session
     $isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
-    if($isLoggedIn) {
+    if ($isLoggedIn) {
         $username = $_SESSION["username"];
         $user_id = $_SESSION["user_id"];
+    } else {
+        $username = "";
     }
     $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
     ?>
@@ -44,38 +52,37 @@
 
     $query3 = "SELECT * FROM `Threads` ORDER BY created_at DESC LIMIT 5";
     $result3 = mysqli_query($conn, $query3);
-
+    if (isset($_GET['logout'])) {
+        logout();
+    }
     ?>
-    <div class="container mt-5">
-        <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <form action="../Home/search.php" class="form-inline" method="post">
-                <div class="input-group">
-                    <input class="form-control" type="search" name="search" placeholder="Tìm kiếm..."
-                        aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-success" type="submit" name="btn_search">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
+        <a class="navbar-brand" href="../trangchu/home.php">NTUCHAN</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
             <div>
-                <?php if ($isLoggedIn): ?>
-                    <!-- Hiển thị ảnh đại diện và tên tài khoản nếu đã đăng nhập -->
-                    <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
-                    <span><?php echo htmlspecialchars($username); ?></span>
-                    <a href="../dangnhap/logout.php" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng
-                        Xuất</a>
+                <?php if (!empty($username)): ?>
+                    <a href="../nguoidung/user.php" class="mr-3 text-decoration-none">
+                        <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
+                        <span class="font-weight-bold text-white"><?php echo htmlspecialchars($username); ?></span>
+                    </a>
                 <?php else: ?>
-                    <!-- Hiển nút Đăng Nhập nếu chưa đăng nhập -->
-                    <a href="../dangnhap/login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
-                    <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                    <a href="../dangnhap/login.php"><button class="btn btn-primary">Login</button></a>
                 <?php endif; ?>
+                <a href="?logout" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
             </div>
         </div>
-
-        <h1 class="text-center">NTUCHAN</h1>
-
+    </nav>
+    <div class="container mt-5">
         <div class="row">
             <div class="col-lg-8">
                 <?php
@@ -127,7 +134,12 @@
             </div>
         </div>
     </div>
-
+    <footer class="text-center text-lg-start mt-5 bg-dark">
+        <div class="text-center text-white p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2024 Copyright:
+            <a class="text-white" href="#">NTUCHAN</a>
+        </div>
+    </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
