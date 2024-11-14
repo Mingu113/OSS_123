@@ -24,37 +24,14 @@ if ($isLoggedIn) {
 }
 if (isset($_GET["id"]))
     $thread_id = $_GET["id"];
-// Gửi bài post mới
-if (isset($_POST['btn_post'])) {
-    if (isset($_POST['postContent'])) {
-        $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
-        $user_id = $_SESSION["user_id"];
-        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("iis", $thread_id, $user_id, $post_content);
-        // Move the old place
-        // PHP block to echo JavaScript
-        echo '<script>
-        window.onload = function() {
-            const targetElement = document.getElementById("new-post");
-            targetElement.scrollIntoView({ behavior: "smooth" });
-        };
-    </script>';
-
-        if ($stmt->execute()) {
-            echo "Bài viết đã được thêm thành công!";
-        } else {
-            echo "Lỗi khi thêm bài viết: " . $stmt->error;
-        }
-    } else {
-        echo "Vui lòng điền đầy đủ thông tin.";
-    }
+if(isset($_GET["post"])) {
+    $post_id = $_GET["post"];
 }
-if (isset($thread_id)) {
 
+if (isset($thread_id)) {
     // Truy vấn để lấy tất cả bài viết
     $query_posts = "
-        SELECT DISTINCT p.thread_id, u.username, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
+        SELECT DISTINCT p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
         FROM Posts p
         JOIN Users u ON u.user_id = p.user_id
         JOIN Threads t ON t.thread_id = p.thread_id
@@ -75,6 +52,42 @@ if (isset($thread_id)) {
     $query2 = "SELECT * FROM `Users`";
     $result2 = mysqli_query($conn, $query2);
     $sltv = mysqli_num_rows($result2);
+    // move to the post in the GET request
+    if(isset($post_id)) {
+    echo '<script>
+        window.onload = function() {
+            const targetElement = document.getElementById("'.$post_id.'");
+            targetElement.scrollIntoView({ behavior: "smooth" });
+        };
+        </script>';
+    }
+} else $thread_title= "Không có Thread";
+
+// Gửi bài post mới
+if (isset($_POST['btn_post'])) {
+    if (isset($_POST['postContent'])) {
+        $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
+        $user_id = $_SESSION["user_id"];
+        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("iis", $thread_id, $user_id, $post_content);
+        // Move the old place
+        // PHP block to echo JavaScript
+        echo '<script>
+        window.onload = function() {
+            const targetElement = document.getElementById("new-post");
+            targetElement.scrollIntoView({ behavior: "smooth" });
+        };
+        </script>';
+
+        if ($stmt->execute()) {
+            echo "Bài viết đã được thêm thành công!";
+        } else {
+            echo "Lỗi khi thêm bài viết: " . $stmt->error;
+        }
+    } else {
+        echo "Vui lòng điền đầy đủ thông tin.";
+    }
 }
 ?>
 
@@ -197,8 +210,6 @@ if (isset($thread_id)) {
                     <!-- Hiển thị ảnh đại diện và tên tài khoản nếu đã đăng nhập -->
                     <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
                     <span><?php echo htmlspecialchars($username); ?></span>
-                    <a href="../dangnhap/logout.php" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng
-                        Xuất</a>
                 <?php else: ?>
                     <!-- Hiển nút Đăng Nhập nếu chưa đăng nhập -->
                     <a href="../dangnhap/login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
@@ -217,15 +228,15 @@ if (isset($thread_id)) {
                     <?php $post_index = 1;
                     mysqli_data_seek($posts_result, 0); ?>
                     <?php while ($post = mysqli_fetch_assoc($posts_result)): ?>
-                        <div class="post">
+                        <div class="post" id="<?php echo $post["post_id"] ?>">
                             <div class="post-number">#<?php echo $post_index++; ?></div>
                             <div style="margin: 10px; margin-right: 25px">
-                                <img src="<?php echo htmlspecialchars($post['profile_pic']) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
-                                    alt="Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+                                <img src="<?php echo ($post['profile_pic']) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
+                                    alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%;">
                                 <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
                             </div>
                             <div class="post-content">
-                                <p><?php echo htmlspecialchars($post['content']); ?></p>
+                                <p><?php echo ($post['content']); ?></p>
                                 <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
                             </div>
                         </div>
