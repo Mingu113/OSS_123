@@ -76,6 +76,7 @@
     session_start();
     $name = $_GET['name'];
     $category_id = $_GET['category_id'];
+    $page = $_GET['page'];
     // Đếm tổng số threads thuộc category này
     $count_th_ca_query = "SELECT COUNT(*) as total FROM `Threads` WHERE `category_id` = $category_id";
     $count_th_ca_result = mysqli_query($conn, $count_th_ca_query);
@@ -133,7 +134,7 @@
                         <?php if ($page > 1): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $page - 1; ?>">Trang
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
                                     trước</a>
                             </li>
                         <?php endif; ?>
@@ -142,7 +143,7 @@
                             <li class="page-item <?php if ($i == $page)
                                 echo 'active'; ?>">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                             </li>
                         <?php endfor; ?>
 
@@ -193,7 +194,7 @@
                         <?php if ($page > 1): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $page - 1; ?>">Trang
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
                                     trước</a>
                             </li>
                         <?php endif; ?>
@@ -202,14 +203,14 @@
                             <li class="page-item <?php if ($i == $page)
                                 echo 'active'; ?>">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                             </li>
                         <?php endfor; ?>
 
                         <?php if ($page < $total_pages): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href=".../Code/Home/categories.php?name=<?php echo urlencode($name); ?>&page=<?php echo $page + 1; ?>">Trang
+                                    href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
                                     sau</a>
                             </li>
                         <?php endif; ?>

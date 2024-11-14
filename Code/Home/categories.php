@@ -13,7 +13,7 @@ if(isset($_GET["name"])){
     $ca = $category["category_id"];
 
     // Chuyển hướng 
-    header("Location:../trangchu/threads.php?name=$name&category_id=$ca");
+    header("Location:.../UI/category/list.php?name=$name&category_id=$ca&page=1");
     exit();
 }
 ?>
