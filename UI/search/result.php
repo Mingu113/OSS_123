@@ -88,13 +88,13 @@
         $search = mysqli_real_escape_string($conn, $_POST["search"]);
     }
 
-    $query1 = "SELECT * FROM `threads` WHERE `Title` LIKE '%$search%'";
+    $query1 = "SELECT * FROM `Threads` WHERE `Title` LIKE '%$search%'";
     $result1 = mysqli_query($conn, $query1);
 
-    $query2 = "SELECT posts.*, users.profile_pic, users.username 
-        FROM posts
-        JOIN users ON posts.user_id = users.user_id 
-        WHERE posts.content LIKE '%$search%'";
+    $query2 = "SELECT Posts.*, Users.profile_pic, Users.username 
+        FROM Posts
+        JOIN Users ON Posts.user_id = Users.user_id 
+        WHERE Posts.content LIKE '%$search%'";
     $result2 = mysqli_query($conn, $query2);
     ?>
 
@@ -127,7 +127,7 @@
                 <?php
                 while ($row1 = mysqli_fetch_array($result1)) {
                     echo "<a href=\"../threads/thread.php?thread_id=" . $row1['thread_id'] . "\" class=\"thread-item\">";
-                    echo "<h5>" . $row1["Title"] . "</h5>";
+                    echo "<h5>" . $row1["title"] . "</h5>";
                     echo "<small>" . $row1["created_at"] . "</small>";
                     echo "</a>";
                 }
