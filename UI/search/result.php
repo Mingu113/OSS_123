@@ -126,7 +126,7 @@
                 <h3>Threads</h3>
                 <?php
                 while ($row1 = mysqli_fetch_array($result1)) {
-                    echo "<a href=\"../threads/thread.php?thread_id=" . $row1['thread_id'] . "\" class=\"thread-item\">";
+                    echo "<a href=\"../threads/thread.php?id=" . $row1['thread_id'] . "\" class=\"thread-item\">";
                     echo "<h5>" . $row1["title"] . "</h5>";
                     echo "<small>" . $row1["created_at"] . "</small>";
                     echo "</a>";
@@ -138,7 +138,7 @@
                 <h3>Posts</h3>
                 <?php
                 while ($row2 = mysqli_fetch_array($result2)) {
-                    echo "<a href=\"../threads/thread.php?id=" . $row2['post_id'] . "\" class=\"post-item d-flex\">";
+                    echo "<a href=\"../threads/thread.php?id=" . $row2['thread_id'] ."&post=".$row2["post_id"] ."\" class=\"post-item d-flex\">";
                     echo "<img src=\"../images/" . ($row2["profile_pic"] ?? "default.jpg") . "\" class=\"post-avatar mr-3\" alt=\"User Avatar\">";
                     echo "<div>";
                     echo "<h5>" . $row2["username"] . "</h5>";
