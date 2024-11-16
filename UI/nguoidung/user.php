@@ -1,63 +1,5 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <title>Trang Chủ Diễn Đàn</title>
-    <style>
-        body {
-            background-color: #f8f9fa;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        .header-section {
-            margin-bottom: 20px;
-        }
-
-        .tb_profile table tr {
-            font-size: 20px;
-        }
-
-        table td {
-            padding: 5px 10px 0px 0px;
-        }
-
-        .spec_td {
-            color: green;
-            font-weight: bold;
-        }
-
-        .change_profile {
-            margin-left: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #eaebec;
-            color: #42628d;
-        }
-
-        .col_right {
-        }
-        .post_li {
-            border-radius: 3px;
-            padding: 10px;
-            margin-left: 50px;
-        }
-    </style>
-</head>
-
-<body>
     <?php
     require "../trangchu/config.php";
     session_start(); // start session
@@ -143,13 +85,65 @@
     if (isset($_GET['logout'])) {
         logout();
     }
-
-
-
-
-
-
     ?>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <title><?php if(!empty($username)) echo $username; else echo "No user"; ?></title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .header-section {
+            margin-bottom: 20px;
+        }
+
+        .tb_profile table tr {
+            font-size: 20px;
+        }
+
+        table td {
+            padding: 5px 10px 0px 0px;
+        }
+
+        .spec_td {
+            color: green;
+            font-weight: bold;
+        }
+
+        .change_profile {
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #eaebec;
+            color: #42628d;
+        }
+
+        .col_right {
+        }
+        .post_li {
+            border-radius: 3px;
+            padding: 10px;
+            margin-left: 50px;
+        }
+    </style>
+</head>
+
+<body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
         <a class="navbar-brand" href="../trangchu/home.php">NTUCHAN</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -157,10 +151,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-            <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
+            <?php require "../search/tool.php" ?>
             <div>
                 <a href="" class="mr-3 text-decoration-none">
                     <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
@@ -225,7 +216,7 @@
                     </div>
                     <h3>Các bài đăng gần đây</h3>
                     <?php
-                    $query = "SELECT content, created_at FROM Posts WHERE user_id = '$user_id' ORDER BY created_at DESC";
+                    $query = "SELECT thread_id, post_id, content, created_at FROM Posts WHERE user_id = '$user_id' ORDER BY created_at DESC LIMIT 5";
                     $result = mysqli_query($conn, $query);
                     if (!$result)
                         die('<br> <b>Query failed</b>');
@@ -234,7 +225,7 @@
                         while ($row = mysqli_fetch_array($result)) {
                             echo "<ul class='list-group'>";
                             echo "<li class='post_li mt-3'>";
-                            echo "<a href='#" . urlencode($row["content"]) . "'>" . "Post: ". $row["content"]. "</br>" ." Created At: ".$row["created_at"]. "</a>";
+                            echo "<a href='../threads/thread.php?id=".$row["thread_id"]."&post=".$row["post_id"]. urlencode($row["content"]) . "'>" . "Post: ". $row["content"]. "</br>" ." Created At: ".$row["created_at"]. "</a>";
                             echo "</li>";
                             echo "</ul>";
                         }
