@@ -1,12 +1,24 @@
 <!doctype html>
 <html lang="en">
 <?php
-    require "../trangchu/config.php";
-    // session_start();
-    $query = $conn->prepare("SELECT u.*, m.major_name FROM Users u LEFT JOIN Majors m ON m.major_id = u.major; ");
-    $query->execute();
-    $result = $query->get_result();
+require "../trangchu/config.php";
+$query_check = $conn->prepare("SELECT * FROM Users WHERE Users.role = 'admin';");
+$query_check->execute();
+$result = $query_check->get_result();
+session_start();
+$is_admin = false;
+while($user_check = $result->fetch_assoc()) {
+    if($user_check['user_id'] == $_SESSION["user_id"]) {
+        $is_admin = true;
+    }
+}
+if(!$is_admin) header("Location: ../trangchu/home.php");
+session_abort();
+$query = $conn->prepare("SELECT u.*, m.major_name FROM Users u LEFT JOIN Majors m ON m.major_id = u.major WHERE u.role = 'user'; ");
+$query->execute();
+$result = $query->get_result();
 ?>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -67,17 +79,17 @@
     <?php require "../trangchu/header.php" ?>
     <div class="container mt-5 flex-grow-1">
         <h3>Danh Sách Người Dùng</h3>
-        <?php while($row = $result->fetch_assoc()) :?>
-        <div class="user-item">
-            <img src="../images/default.jpg" class="user-avatar" alt="User Avatar">
-            <div class="user-info">
-                <h5><?php echo $row["username"];?></h5>
-                <p>Email: <?php echo $row["email"];?></p>
-                <p>Khoa: <?php echo $row["major_name"]; ?></p>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <div class="user-item">
+                <img src="../images/default.jpg" class="user-avatar" alt="User Avatar">
+                <div class="user-info">
+                    <h5><?php echo $row["username"]; ?></h5>
+                    <p>Email: <?php echo $row["email"]; ?></p>
+                    <p>Khoa: <?php echo $row["major_name"]; ?></p>
+                </div>
+                <button class="btn btn-danger ban-button">Ban User</button>
             </div>
-            <button class="btn btn-danger ban-button">Ban User</button>
-        </div>
-        <?php endwhile;?>
+        <?php endwhile; ?>
     </div>
 
     <div class="footer">
@@ -88,5 +100,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+<?php $result->close(); ?>
 
 </html>
