@@ -53,7 +53,7 @@
     $query3 = "SELECT * FROM `Threads` ORDER BY created_at DESC LIMIT 5";
     $result3 = mysqli_query($conn, $query3);
     if (isset($_GET['logout'])) {
-        logout();
+        session_unset();
     }
     ?>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">

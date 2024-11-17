@@ -83,7 +83,7 @@
         changePassword($user_id, $old_password, $new_password, $curr_password);
     }
     if (isset($_GET['logout'])) {
-        logout();
+        session_unset();
     }
     ?>
 

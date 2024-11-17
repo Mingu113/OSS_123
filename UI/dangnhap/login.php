@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+session_unset();
 // Kết nối tới cơ sở dữ liệu
 $servername = "localhost";
 $username = "root";

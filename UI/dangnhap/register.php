@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="styles/style.css">
 </head>
 <?php
+session_unset();
 // Kết nối tới cơ sở dữ liệu
 $servername = "localhost";
 $username = "root";

@@ -8,7 +8,7 @@
         $username = "";
     }
     $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
-    ?>
+?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
         <a class="navbar-brand" href="../trangchu/home.php">NTUCHAN</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -26,7 +26,7 @@
                 <?php else: ?>
                     <a href="../dangnhap/login.php"><button class="btn btn-primary">Login</button></a>
                 <?php endif; ?>
-                <a href="?logout" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+                <a href="../dangnhap/login.php" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
             </div>
         </div>
     </nav>
