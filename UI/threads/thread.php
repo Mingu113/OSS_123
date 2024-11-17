@@ -2,66 +2,13 @@
 <html lang="en">
 
 <?php
-session_start(); // Khởi động session để theo dõi trạng thái đăng nhập
-$user_id = $_SESSION["user_id"];
 
 require "../trangchu/config.php";
-// Kiểm tra nếu người dùng đã đăng nhập
-$isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
-
-if ($isLoggedIn) {
-    $username = $_SESSION["username"];
-
-    // Truy vấn để lấy thông tin người dùng (bao gồm ảnh đại diện nếu có)
-    $query = "SELECT * FROM Users WHERE username = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-
-    $profileImage = !empty($user["profile_pic"]) ? $user["profile_pic"] : "../images/default.jpg";
-}
 if (isset($_GET["id"]))
     $thread_id = $_GET["id"];
-if(isset($_GET["post"])) {
+if (isset($_GET["post"])) {
     $post_id = $_GET["post"];
 }
-
-if (isset($thread_id)) {
-    // Truy vấn để lấy tất cả bài viết
-    $query_posts = "
-        SELECT DISTINCT p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
-        FROM Posts p
-        JOIN Users u ON u.user_id = p.user_id
-        JOIN Threads t ON t.thread_id = p.thread_id
-        WHERE p.thread_id = $thread_id
-        ORDER BY p.created_at ASC
-    ";
-    $stmt_posts = $conn->prepare($query_posts);
-    $stmt_posts->execute();
-    $posts_result = $stmt_posts->get_result();
-    if (mysqli_num_rows($posts_result) == 0) {
-        $thread_title = "Không có Thread";
-        $thread_is_available = false;
-    } else {
-        $thread_title = $posts_result->fetch_assoc()["title"];
-        $thread_is_available = true;
-    }
-
-    $query2 = "SELECT * FROM `Users`";
-    $result2 = mysqli_query($conn, $query2);
-    $sltv = mysqli_num_rows($result2);
-    // move to the post in the GET request
-    if(isset($post_id)) {
-    echo '<script>
-        window.onload = function() {
-            const targetElement = document.getElementById("'.$post_id.'");
-            targetElement.scrollIntoView({ behavior: "smooth" });
-        };
-        </script>';
-    }
-} else $thread_title= "Không có Thread";
 
 // Gửi bài post mới
 if (isset($_POST['btn_post'])) {
@@ -89,6 +36,42 @@ if (isset($_POST['btn_post'])) {
         echo "Vui lòng điền đầy đủ thông tin.";
     }
 }
+if (isset($thread_id)) {
+    // Truy vấn để lấy tất cả bài viết
+    $query_posts = "
+        SELECT DISTINCT p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
+        FROM Posts p
+        JOIN Users u ON u.user_id = p.user_id
+        JOIN Threads t ON t.thread_id = p.thread_id
+        WHERE p.thread_id = $thread_id
+        ORDER BY p.created_at ASC
+    ";
+    $stmt_posts = $conn->prepare($query_posts);
+    $stmt_posts->execute();
+    $posts_result = $stmt_posts->get_result();
+    if (mysqli_num_rows($posts_result) == 0) {
+        $thread_title = "Không có Thread";
+        $thread_is_available = false;
+    } else {
+        $thread_title = $posts_result->fetch_assoc()["title"];
+        $thread_is_available = true;
+    }
+
+    $query2 = "SELECT * FROM `Users`";
+    $result2 = mysqli_query($conn, $query2);
+    $sltv = mysqli_num_rows($result2);
+    // move to the post in the GET request
+    if (isset($post_id)) {
+        echo '<script>
+        window.onload = function() {
+            const targetElement = document.getElementById("' . $post_id . '");
+            targetElement.scrollIntoView({ behavior: "smooth" });
+        };
+        </script>';
+    }
+} else
+    $thread_title = "Không có Thread";
+
 ?>
 
 <head>
@@ -192,34 +175,9 @@ if (isset($_POST['btn_post'])) {
 </head>
 
 <body>
+    <?php session_abort();
+    require("../trangchu/header.php"); ?>
     <div class="container mt-5">
-        <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <form action="" class="form-inline" method="post">
-                <div class="input-group">
-                    <input class="form-control" type="search" name="search" placeholder="Tìm kiếm..."
-                        aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-success" type="submit" name="btn_search">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <div>
-                <?php if ($isLoggedIn): ?>
-                    <!-- Hiển thị ảnh đại diện và tên tài khoản nếu đã đăng nhập -->
-                    <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
-                    <span><?php echo htmlspecialchars($username) ; ?></span>
-                <?php else: ?>
-                    <!-- Hiển nút Đăng Nhập nếu chưa đăng nhập -->
-                    <a href="../dangnhap/login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
-                    <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <h1 class="text-center">NTUCHAN</h1>
-
         <div class="row">
             <div class="col-lg-8">
                 <!-- Hiển thị tất cả bài viết-->
@@ -242,7 +200,6 @@ if (isset($_POST['btn_post'])) {
                         </div>
 
                     <?php endwhile; ?>
-                    <?php echo $post_index;?>
                 <?php endif; ?>
 
                 <?php if ($isLoggedIn && isset($thread_id) && $thread_is_available): ?>
@@ -258,7 +215,10 @@ if (isset($_POST['btn_post'])) {
                             <button type="submit" class="btn btn-primary" name="btn_post">Đăng</button>
                         </form>
                     </div>
-                <?php else: ?>
+                <?php elseif($thread_is_available): ?>
+                    <h1>Đăng nhập để đăng bài viết</h1>
+                <?php endif; ?>
+                <?php if (!$thread_is_available): ?>
                     <div style="text-align: center;">
                         <img src="../images/not_found.gif" alt="Image" width="60%">
                         <h1>Không có bài thread này, có thể đã bị xóa hoặc không tồn tại</h1>
