@@ -109,7 +109,7 @@
                         <?php
                         while ($row = mysqli_fetch_array($result3)) {
                             echo "<li>";
-                            echo $row["title"];
+                            echo '<a href="../threads/thread.php?id='.$row["thread_id"].'">'.$row["title"]."</a>";
                             echo "</li>";
                         }
                         ?>
