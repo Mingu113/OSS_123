@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 11, 2024 at 01:39 PM
+-- Generation Time: Nov 17, 2024 at 04:02 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -122,7 +122,58 @@ CREATE TABLE `Posts` (
 --
 
 INSERT INTO `Posts` (`post_id`, `thread_id`, `user_id`, `content`, `created_at`) VALUES
-(1, 1, 1, 'Test', '2024-11-11 12:14:58');
+(1, 1, 1, 'Test', '2024-11-11 12:14:58'),
+(2, 1, 36, 'Tét 1', '2024-11-13 12:47:30'),
+(3, 1, 37, 'askdjhsakdjsadkj h', '2024-11-13 12:47:46'),
+(10, 1, 37, 'こんにちは', '2024-11-13 13:33:20'),
+(11, 2, 1, 'aaaaa', '2024-11-13 13:46:19'),
+(12, 1, 37, 'ssladkj als\\r\\n', '2024-11-14 03:15:35'),
+(13, 1, 37, 'Test message', '2024-11-14 03:15:47'),
+(14, 1, 37, '2', '2024-11-14 03:16:37'),
+(15, 1, 37, '1111', '2024-11-14 03:16:40'),
+(16, 1, 37, 'ấds', '2024-11-14 03:16:43'),
+(17, 1, 37, 'https://www.youtube.com/watch?v=2sbYlr0L4L0&list=RD_YnwnxSE2UA&index=3\\r\\n', '2024-11-14 03:16:53'),
+(18, 1, 37, 'https://www.youtube.com/watch?v=2sbYlr0L4L0&list=RD_YnwnxSE2UA&index=3', '2024-11-14 03:17:04'),
+(19, 1, 37, 'dsaodjaslkdj salkd\\r\\naoskdnasldksand\\\'sak nsald\\r\\n', '2024-11-14 03:17:12'),
+(20, 1, 37, 'sao lại có escape characters\\r\\n', '2024-11-14 03:17:29'),
+(21, 1, 37, 'sao lại có escape characters\\r\\n', '2024-11-14 03:17:45'),
+(22, 1, 37, 'asdasd asdadas d', '2024-11-14 03:18:02'),
+(23, 1, 37, 'Một hai ba\\r\\nBốn năm sáu', '2024-11-14 03:18:14'),
+(24, 1, 37, 'bảy', '2024-11-14 03:18:22'),
+(25, 1, 37, 'test', '2024-11-14 03:19:12'),
+(26, 1, 37, 'test', '2024-11-14 03:19:23'),
+(27, 1, 37, 'test', '2024-11-14 03:20:19'),
+(28, 6, 36, 'ssss', '2024-11-14 11:45:34'),
+(29, 7, 36, 'hello', '2024-11-14 11:46:36'),
+(30, 8, 36, 'hello', '2024-11-14 11:46:57'),
+(31, 9, 36, 'sssssdddd', '2024-11-14 11:47:12'),
+(32, 10, 36, 'sd', '2024-11-14 11:48:36'),
+(33, 11, 36, 'asdasd', '2024-11-14 11:49:30'),
+(34, 11, 36, 'Hello', '2024-11-14 11:49:34'),
+(35, 11, 36, 'Hello', '2024-11-14 11:49:38'),
+(36, 1, 36, 'aaa', '2024-11-14 11:50:06'),
+(37, 1, 36, 'sdd', '2024-11-14 11:50:09'),
+(38, 11, 36, 'sASA', '2024-11-14 11:50:18'),
+(39, 1, 36, 'dddd', '2024-11-14 11:50:31'),
+(40, 1, 36, 'ssaa', '2024-11-14 11:50:58'),
+(41, 1, 36, 'dd', '2024-11-14 11:53:20'),
+(42, 1, 36, 'dd', '2024-11-14 11:53:25'),
+(43, 11, 36, 'dd', '2024-11-14 12:04:41'),
+(44, 2, 36, 'cccc', '2024-11-14 12:06:53'),
+(45, 2, 36, 'cccc', '2024-11-14 12:07:06'),
+(46, 2, 36, 'ssadas', '2024-11-14 12:07:45'),
+(47, 2, 36, 'xxxx', '2024-11-14 12:08:34'),
+(48, 2, 36, ' ccc', '2024-11-14 12:08:45'),
+(49, 12, 36, 'ccccccc', '2024-11-14 12:14:21'),
+(50, 13, 36, 'hello', '2024-11-15 23:51:40'),
+(51, 13, 36, 'xin chao', '2024-11-15 23:51:46'),
+(52, 2, 36, 'hello\\r\\n', '2024-11-17 13:44:01'),
+(53, 2, 36, 'hello \\r\\n', '2024-11-17 13:46:36'),
+(54, 2, 36, 'hello\\r\\n', '2024-11-17 13:48:36'),
+(55, 2, 36, 'Hello \\r\\n', '2024-11-17 13:51:05'),
+(56, 2, 36, 'Hello \r\n', '2024-11-17 13:52:41'),
+(57, 2, 36, 'Hello \\r\\n\\r\\n', '2024-11-17 13:55:08'),
+(58, 2, 36, 'Hello\\r\\n\\r\\n\\r\\n', '2024-11-17 13:55:31');
 
 -- --------------------------------------------------------
 
@@ -132,7 +183,7 @@ INSERT INTO `Posts` (`post_id`, `thread_id`, `user_id`, `content`, `created_at`)
 
 CREATE TABLE `Threads` (
   `thread_id` int(11) NOT NULL,
-  `Title` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
   `category_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `newest_post_at` timestamp NULL DEFAULT NULL,
@@ -144,8 +195,17 @@ CREATE TABLE `Threads` (
 -- Dumping data for table `Threads`
 --
 
-INSERT INTO `Threads` (`thread_id`, `Title`, `category_id`, `created_at`, `newest_post_at`, `posts_count`, `is_pinned`) VALUES
-(1, 'Thread test', 1, '2024-11-11 12:13:43', NULL, NULL, 1);
+INSERT INTO `Threads` (`thread_id`, `title`, `category_id`, `created_at`, `newest_post_at`, `posts_count`, `is_pinned`) VALUES
+(1, 'Thread test', 1, '2024-11-11 12:13:43', NULL, NULL, 1),
+(2, 'Thread test số 2', 1, '2024-11-13 13:45:48', NULL, NULL, 0),
+(6, 'aaa', 1, '2024-11-14 11:45:34', NULL, NULL, 0),
+(7, 'test', 1, '2024-11-14 11:46:36', NULL, NULL, 0),
+(8, 'test', 1, '2024-11-14 11:46:57', NULL, NULL, 0),
+(9, 'aaasss', 1, '2024-11-14 11:47:12', NULL, NULL, 0),
+(10, 'aa', 1, '2024-11-14 11:48:36', NULL, NULL, 0),
+(11, 'test', 1, '2024-11-14 11:49:30', NULL, NULL, 0),
+(12, 'cccc', 1, '2024-11-14 12:14:21', NULL, NULL, 0),
+(13, 'testtt', 3, '2024-11-15 23:51:40', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -156,6 +216,7 @@ INSERT INTO `Threads` (`thread_id`, `Title`, `category_id`, `created_at`, `newes
 CREATE TABLE `Users` (
   `user_id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
+  `role` varchar(10) DEFAULT 'user',
   `password_hash` varchar(64) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
   `major` int(11) DEFAULT NULL,
@@ -168,8 +229,11 @@ CREATE TABLE `Users` (
 -- Dumping data for table `Users`
 --
 
-INSERT INTO `Users` (`user_id`, `username`, `password_hash`, `email`, `major`, `profile_pic`, `created_at`, `last_logon`) VALUES
-(1, 'mingu', 'admin', NULL, NULL, NULL, '2024-11-11 12:14:41', NULL);
+INSERT INTO `Users` (`user_id`, `username`, `role`, `password_hash`, `email`, `major`, `profile_pic`, `created_at`, `last_logon`) VALUES
+(1, 'mingu', 'user', 'admin', NULL, NULL, NULL, '2024-11-11 12:14:41', NULL),
+(36, 'minh', 'admin', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', NULL, 3, NULL, '2024-11-13 12:26:10', NULL),
+(37, 'minh123', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'mingu@yandex.ru', NULL, NULL, '2024-11-13 12:26:22', NULL),
+(44, 'test', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'test@example.com', NULL, NULL, '2024-11-17 15:00:32', NULL);
 
 --
 -- Indexes for dumped tables
@@ -262,19 +326,19 @@ ALTER TABLE `Notifications`
 -- AUTO_INCREMENT for table `Posts`
 --
 ALTER TABLE `Posts`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `Threads`
 --
 ALTER TABLE `Threads`
-  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `Users`
 --
 ALTER TABLE `Users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- Constraints for dumped tables
