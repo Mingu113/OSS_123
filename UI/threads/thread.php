@@ -67,6 +67,7 @@ if (isset($thread_id)) {
 if (isset($_POST['btn_post'])) {
     if (isset($_POST['postContent'])) {
         $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
+        $post_content = htmlspecialchars($post_content);
         $user_id = $_SESSION["user_id"];
         $query = "INSERT INTO Posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())";
         $stmt = $conn->prepare($query);
@@ -208,7 +209,7 @@ if (isset($_POST['btn_post'])) {
                 <?php if ($isLoggedIn): ?>
                     <!-- Hiển thị ảnh đại diện và tên tài khoản nếu đã đăng nhập -->
                     <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
-                    <span><?php echo htmlspecialchars($username); ?></span>
+                    <span><?php echo htmlspecialchars($username) ; ?></span>
                 <?php else: ?>
                     <!-- Hiển nút Đăng Nhập nếu chưa đăng nhập -->
                     <a href="../dangnhap/login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
@@ -235,7 +236,7 @@ if (isset($_POST['btn_post'])) {
                                 <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
                             </div>
                             <div class="post-content">
-                                <p><?php echo ($post['content']); ?></p>
+                                <p><?php echo nl2br(stripcslashes($post['content'])); ?></p>
                                 <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
                             </div>
                         </div>
