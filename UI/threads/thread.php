@@ -2,7 +2,7 @@
 <html lang="en">
 
 <?php
-
+session_start();
 require "../trangchu/config.php";
 if (isset($_GET["id"]))
     $thread_id = $_GET["id"];
