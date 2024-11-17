@@ -225,7 +225,7 @@
                         while ($row = mysqli_fetch_array($result)) {
                             echo "<ul class='list-group'>";
                             echo "<li class='post_li mt-3'>";
-                            echo "<a href='../threads/thread.php?id=".$row["thread_id"]."&post=".$row["post_id"]. urlencode($row["content"]) . "'>" . "Post: ". $row["content"]. "</br>" ." Created At: ".$row["created_at"]. "</a>";
+                            echo "<a href='../threads/thread.php?id=".$row["thread_id"]."&post=".$row["post_id"]. urlencode($row["content"]) . "'>" . "Post: ". nl2br(stripcslashes($row["content"])). "</br>" ." Created At: ".$row["created_at"]. "</a>";
                             echo "</li>";
                             echo "</ul>";
                         }
