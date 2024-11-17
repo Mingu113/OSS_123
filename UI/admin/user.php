@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="en">
-
+<?php
+    require "../trangchu/config.php";
+    // session_start();
+    $query = $conn->prepare("SELECT u.*, m.major_name FROM Users u LEFT JOIN Majors m ON m.major_id = u.major; ");
+    $query->execute();
+    $result = $query->get_result();
+?>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -58,56 +64,20 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
-        <a class="navbar-brand" href="#">NTUCHAN</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            <div>
-                <a href="#" class="mr-3 text-decoration-none">
-                    <img src="../images/default.jpg" class="rounded-circle" width="40" height="40">
-                    <span class="font-weight-bold text-white">User123</span>
-                </a>
-                <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
-            </div>
-        </div>
-    </nav>
-
+    <?php require "../trangchu/header.php" ?>
     <div class="container mt-5 flex-grow-1">
         <h3>Danh Sách Người Dùng</h3>
+        <?php while($row = $result->fetch_assoc()) :?>
         <div class="user-item">
             <img src="../images/default.jpg" class="user-avatar" alt="User Avatar">
             <div class="user-info">
-                <h5>User123</h5>
-                <p>Email: user123@example.com</p>
-                <p>Khoa: Khoa Công Nghệ Thông Tin</p>
+                <h5><?php echo $row["username"];?></h5>
+                <p>Email: <?php echo $row["email"];?></p>
+                <p>Khoa: <?php echo $row["major_name"]; ?></p>
             </div>
             <button class="btn btn-danger ban-button">Ban User</button>
         </div>
-        <div class="user-item">
-            <img src="../images/default.jpg" class="user-avatar" alt="User Avatar">
-            <div class="user-info">
-                <h5>User456</h5>
-                <p>Email: user456@example.com</p>
-                <p>Khoa: Khoa Kinh Tế</p>
-            </div>
-            <button class="btn btn-danger ban-button">Ban User</button>
-        </div>
-        <div class="user-item">
-            <img src="../images/default.jpg" class="user-avatar" alt="User Avatar">
-            <div class="user-info">
-                <h5>User789</h5>
-                <p>Email: user789@example.com</p>
-                <p>Khoa: Khoa Ngoại Ngữ</p>
-            </div>
-            <button class="btn btn-danger ban-button">Ban User</button>
-        </div>
+        <?php endwhile;?>
     </div>
 
     <div class="footer">
