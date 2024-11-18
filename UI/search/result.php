@@ -12,7 +12,7 @@
             background-color: #f8f9fa;
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Chiều cao tối thiểu của body */
+            min-height: 100vh;
         }
 
         .header-section {
@@ -32,14 +32,14 @@
             padding: 15px;
             margin-bottom: 15px;
             background-color: #ffffff;
-            text-decoration: none; /* Bỏ gạch chân */
-            color: inherit; /* Giữ nguyên màu chữ */
-            transition: background-color 0.2s; /* Hiệu ứng chuyển màu */
+            text-decoration: none;
+            color: inherit;
+            transition: background-color 0.2s;
         }
 
         .thread-item:hover,
         .post-item:hover {
-            background-color: #f1f1f1; /* Hiệu ứng hover */
+            background-color: #f1f1f1;
         }
 
         .post-avatar {
@@ -55,19 +55,24 @@
 
         .flex-container > div {
             flex: 1;
-            margin: 0 10px; /* Khoảng cách giữa hai cột */
+            margin: 0 10px;
         }
 
         .footer {
-            background-color: #000; /* Đổi màu footer thành màu đen */
+            background-color: #000;
             color: white;
             text-align: center;
             padding: 10px 0;
-            margin-top: auto; /* Đẩy footer xuống dưới cùng */
+            margin-top: auto;
         }
 
         a {
-            display: block; /* Đảm bảo toàn bộ khung là clickable */
+            display: block;
+        }
+
+        .highlight {
+            background-color: yellow; /* Màu nền cho phần tìm thấy */
+            font-weight: bold; /* Đậm chữ */
         }
     </style>
 </head>
@@ -79,11 +84,12 @@
     $isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
     $username = $isLoggedIn ? $_SESSION["username"] : "";
     $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
-    ?>
 
-    <?php
-    // Xử lý tìm kiếm
-    $search = ""; // Khởi tạo biến tìm kiếm
+    function highlight($text, $search) {
+        return preg_replace('/(' . preg_quote($search, '/') . ')/i', '<span class="highlight">$1</span>', $text);
+    }
+
+    $search = "";
     if (isset($_POST["search"])) {
         $search = mysqli_real_escape_string($conn, $_POST["search"]);
     }
@@ -91,9 +97,10 @@
     $query1 = "SELECT * FROM `Threads` WHERE `Title` LIKE '%$search%'";
     $result1 = mysqli_query($conn, $query1);
 
-    $query2 = "SELECT Posts.*, Users.profile_pic, Users.username 
+    $query2 = "SELECT Posts.*, Users.profile_pic, Users.username, Threads.title
         FROM Posts
         JOIN Users ON Posts.user_id = Users.user_id 
+        JOIN Threads ON Posts.thread_id = Threads.thread_id
         WHERE Posts.content LIKE '%$search%'";
     $result2 = mysqli_query($conn, $query2);
     ?>
@@ -126,8 +133,9 @@
                 <h3>Threads</h3>
                 <?php
                 while ($row1 = mysqli_fetch_array($result1)) {
+                    $highlightedTitle = highlight($row1["Title"], $search);
                     echo "<a href=\"../threads/thread.php?id=" . $row1['thread_id'] . "\" class=\"thread-item\">";
-                    echo "<h5>" . $row1["title"] . "</h5>";
+                    echo "<h5>" . $highlightedTitle . "</h5>";
                     echo "<small>" . $row1["created_at"] . "</small>";
                     echo "</a>";
                 }
@@ -138,12 +146,15 @@
                 <h3>Posts</h3>
                 <?php
                 while ($row2 = mysqli_fetch_array($result2)) {
+                    $highlightedContent = highlight($row2["content"], $search);
                     echo "<a href=\"../threads/thread.php?id=" . $row2['thread_id'] ."&post=".$row2["post_id"] ."\" class=\"post-item d-flex\">";
                     echo "<img src=\"../images/" . ($row2["profile_pic"] ?? "default.jpg") . "\" class=\"post-avatar mr-3\" alt=\"User Avatar\">";
-                    echo "<div>";
+                    echo "<div><h5><strong>";
+                    echo $row2["title"];
+                    echo "</strong></h5>";
                     echo "<h5>" . $row2["username"] . "</h5>";
                     echo "<small>" . $row2["created_at"] . "</small>";
-                    echo "<p>" . $row2["content"] . "</p>";
+                    echo "<p>" . $highlightedContent . "</p>";
                     echo "</div></a>";
                 }
                 ?>
@@ -152,7 +163,7 @@
     </div>
 
     <!-- import footer -->
-     <?php require "../trangchu/footer.php" ?>
+    <?php require "../trangchu/footer.php" ?>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
