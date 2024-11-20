@@ -67,20 +67,96 @@
         .li_nav {
             background-color: #f1f8fd;
         }
+        .highlight {
+            background-color: yellow; /* Màu nền cho phần tìm thấy */
+            font-weight: bold; /* Đậm chữ */
+        }
     </style>
 </head>
 
 <body>
     <?php
-    require "../trangchu/config.php";
-    session_start();
+    require "../category/config.php";
+    // Lấy dữ liệu từ form hoặc URL
+    $key = $_POST['search'] ?? $_GET['search'] ?? null;
+    // Chống tấn công SQL Injection
+    if($key){
+        $key = addslashes($key);
+    }else{
+        echo "<script>alert('Lỗi: Dữ liệu nhập không hợp lệ. Vui lòng nhập lại.'); window.history.back();</script>";
+        exit();
+    }
+    // Highlight các từ khóa tìm kiếm
+    function highlight($text, $key) {
+        return preg_replace('/(' . preg_quote($key, '/') . ')/i', '<span class="highlight">$1</span>', $text);
+    }
 
-    // Lấy dữ liệu từ session
-    $search_results = $_SESSION["search_results"];
-    $total_search = $_SESSION["total_search"];
-    $search_per_page = $_SESSION["search_per_page"];
-    $search  = $_SESSION['search'];
-    $current_page = $_SESSION["current_page"];
+    // Đếm tổng sô search có trong Threads và Posts
+    $total_search_query = "SELECT COUNT(DISTINCT Threads.thread_id) AS total
+        FROM Threads 
+        LEFT JOIN Posts ON Threads.thread_id = Posts.thread_id 
+        WHERE Threads.title LIKE '%$key%' OR Posts.content LIKE '%$key%'";
+    $total_search_results = mysqli_query($conn, $total_search_query);
+    $total_search = mysqli_fetch_assoc($total_search_results)['total'];
+
+    // Số lượng threads mỗi trang
+    $search_per_page = 10;
+
+    // Số trang hiện tại từ URL hoặc mặc định là 1
+    $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+    if ($page < 1)
+        $page = 1;
+
+    // Tính vị trí cho giới hạn phân trang
+    $offset = ($page - 1) * $search_per_page;
+
+    // Truy vấn lấy dữ liệu theo title có key của các threads mà trong đó không có posts nào chứa key
+    $threads_no_posts= "SELECT 
+        Threads.thread_id, 
+        Threads.Title, 
+        Threads.category_id, 
+        Threads.created_at AS thread_created_at, 
+        Threads.newest_post_at, 
+        Threads.posts_count, 
+        Threads.is_pinned, 
+        (SELECT post_id FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS post_id,
+        (SELECT user_id FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS user_id,
+        (SELECT content FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS post_content,
+        (SELECT created_at FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS post_created_at
+    FROM Threads
+    WHERE Threads.title LIKE '%$key%'
+    AND Threads.thread_id NOT IN (
+        SELECT Threads.thread_id
+        FROM Threads 
+        JOIN Posts ON Threads.thread_id = Posts.thread_id
+        WHERE Posts.content LIKE '%$key%'
+    )";
+    // Truy vấn tất cả các posts
+    $all_posts= "SELECT 
+        Threads.thread_id, 
+        Threads.Title, 
+        Threads.category_id, 
+        Threads.created_at AS thread_created_at, 
+        Threads.newest_post_at, 
+        Threads.posts_count, 
+        Threads.is_pinned, 
+        Posts.post_id,
+        Posts.user_id, 
+        Posts.content AS post_content, 
+        Posts.created_at AS post_created_at
+    FROM Threads 
+    JOIN Posts ON Threads.thread_id = Posts.thread_id 
+    WHERE Posts.content LIKE '%$key%'";
+    // Gộp 2 bảng làm 1 và phân trang
+    $search_query = "($threads_no_posts) UNION ALL ($all_posts)
+    ORDER BY post_created_at DESC
+    LIMIT $offset, $search_per_page;";
+
+    $se_result = mysqli_query($conn, $search_query);
+    $search_results = [];
+    while ($row = mysqli_fetch_assoc($se_result)) {
+        $search_results[] = $row;
+    }
 
     // Tính tổng số trang
     $total_pages = ceil($total_search / $search_per_page);
@@ -105,32 +181,31 @@
 
         <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Thread name?</a>
         </span>
-        <!-- Thay bằng tên của Post -->
-        <h3 class=""><?php echo $search; ?></h3>
+        <h3 class=""><?php echo $key; ?></h3>
         <div class="row">
             <!-- Liên kết phân trang -->
             <nav aria-label="Page navigation">
                 <ul class="pagination">
-                    <?php if ($current_page > 1): ?>
+                    <?php if ($page > 1): ?>
                         <li class="page-item">
                             <a class="page-link"
-                                href=".../Code/Home/search.php?search=<?php echo urlencode($search ); ?>&page=<?php echo $current_page - 1; ?>">Trang
+                                href="search.php?search=<?php echo urlencode($key); ?>&page=<?php echo $page - 1; ?>">Trang
                                 trước</a>
                         </li>
                     <?php endif; ?>
 
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <li class="page-item <?php if ($i == $current_page)
+                        <li class="page-item <?php if ($i == $page)
                             echo 'active'; ?>">
                             <a class="page-link"
-                                href=".../Code/Home/search.php?search=<?php echo urlencode($search ); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                href="search.php?search=<?php echo urlencode($key); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                         </li>
                     <?php endfor; ?>
 
-                    <?php if ($current_page < $total_pages): ?>
+                    <?php if ($page < $total_pages): ?>
                         <li class="page-item">
                             <a class="page-link"
-                                href=".../Code/Home/search.php?search=<?php echo urlencode($search ); ?>&page=<?php echo $current_page + 1; ?>">Trang
+                                href="search.php?search=<?php echo urlencode($key); ?>&page=<?php echo $page + 1; ?>">Trang
                                 sau</a>
                         </li>
                     <?php endif; ?>
@@ -141,10 +216,11 @@
                     <li class="list-group-item d-flex">
                         <img src="..." alt="icon" class="my-1 mr-3">
                         <div class="content-wrapper ">
-                            <a href="#" class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['Title']); ?></a>
-                            <span><?php echo htmlspecialchars($value['content']); ?></span>
+                            <a href="#"
+                                class="topic-name font-weight-bold"><?php echo highlight(htmlspecialchars($value['Title']),$key); ?></a>
+                            <span><?php echo htmlspecialchars($value['post_content']); ?></span>
                             <div><span>username</span> |
-                                <span><?php echo htmlspecialchars($value['thread_created_at']); ?></span>
+                                <span><?php echo highlight(htmlspecialchars($value['post_created_at']), $key); ?></span>
                             </div>
                         </div>
                     </li>
@@ -153,26 +229,26 @@
             <h3></h3>
             <nav aria-label="Page navigation">
                 <ul class="pagination">
-                    <?php if ($current_page > 1): ?>
+                    <?php if ($page > 1): ?>
                         <li class="page-item">
                             <a class="page-link"
-                                href=".../Code/Home/search.php?search=<?php echo urlencode($search); ?>&page=<?php echo $current_page - 1; ?>">Trang
+                                href="search.php?search=<?php echo urlencode($key); ?>&page=<?php echo $page - 1; ?>">Trang
                                 trước</a>
                         </li>
                     <?php endif; ?>
 
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <li class="page-item <?php if ($i == $current_page)
+                        <li class="page-item <?php if ($i == $page)
                             echo 'active'; ?>">
                             <a class="page-link"
-                                href=".../Code/Home/search.php?search=<?php echo urlencode($search); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                href="search.php?search=<?php echo urlencode($key); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                         </li>
                     <?php endfor; ?>
 
-                    <?php if ($current_page < $total_pages): ?>
+                    <?php if ($page < $total_pages): ?>
                         <li class="page-item">
                             <a class="page-link"
-                                href=".../Code/Home/search.php?search=<?php echo urlencode($search); ?>&page=<?php echo $current_page + 1; ?>">Trang
+                                href="search.php?search=<?php echo urlencode($key); ?>&page=<?php echo $page + 1; ?>">Trang
                                 sau</a>
                         </li>
                     <?php endif; ?>
@@ -182,7 +258,7 @@
 
         </div>
     </div>
-    
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
