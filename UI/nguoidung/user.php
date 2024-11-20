@@ -16,6 +16,7 @@ if ($isLoggedIn) {
         $email = $user_data["email"];
         $major = $user_data["major"];
         $profileImage = $user_data["profile_pic"];
+        $_SESSION["pfp"] = $profileImage;
         $user_is_banned = $user_data["is_banned"];
     }
 } else {
@@ -54,6 +55,10 @@ if (isset($_POST['doi_email'])) {
     changeEmail($user_id, $newemail, $password);
 }
 
+if(isset($_POST["doi_anh"])) {
+    $file = $_FILES["img_files"];
+    changepfp($file, $user_id);
+}
 function changePassword($user_id, $old_password, $new_password, $curr_password)
 {
     global $conn;
@@ -111,26 +116,28 @@ if (isset($_POST["doi_major"])) {
     $major = $_POST["major"];
     changeMajor($user_id, $major);
 }
+function changepfp($file, $user_id) {
+    global $conn;
+    global $profileImage;
+    if (isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $file['tmp_name'];
+        $fileName = $file['name'];
+        $fileSize = $file['size'];
+        $fileType = $file['type'];
 
-
-if (isset($_POST['doi_anh'])) {
-
-
-    if (isset($_FILES['img_files']) && $_FILES['img_files']['error'] === UPLOAD_ERR_OK) {
-        $fileTmpPath = $_FILES['img_files']['tmp_name'];
-        $fileName = $_FILES['img_files']['name'];
-        $fileSize = $_FILES['img_files']['size'];
-        $fileType = $_FILES['img_files']['type'];
-
-        $uploadFileDir = './uploads/';
+        // $uploadFileDir = '../images/userpfp/';
+        $uploadFileDir = '../images/userpfp/';
         $dest_path = $uploadFileDir . basename($fileName);
 
         $allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($fileType, $allowedFileTypes)) {
             if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                $query = "UPDATE users SET profile_pic = '$dest_path' WHERE user_id = $user_id";
+                $query = "UPDATE Users SET profile_pic = '$dest_path' WHERE user_id = $user_id";
                 if (mysqli_query($conn, $query)) {
-                    echo '<div class="alert alert-success text-center" role="alert" id="alertMessage">Đã cập nhật, đăng nhập lại</div>';
+                    echo '<div class="alert alert-success text-center" role="alert" id="alertMessage">Đã cập nhật.</div>';
+                    // Delete the old file because I don't want it to take many storage, refresh the page.
+                    unlink($_SESSION["pfp"]);
+                    header("Location: ./user.php");
                 } else {
                     echo '<div class="alert alert-danger text-center" role="alert" id="alertMessage">Có lỗi xảy ra khi cập nhật ảnh</div>';
                 }
@@ -140,14 +147,11 @@ if (isset($_POST['doi_anh'])) {
             }
         } else {
             echo '<div class="alert alert-danger text-center" role="alert" id="alertMessage">Định dạng tệp không hợp lệ</div>';
-
         }
     } else {
         echo '<div class="alert alert-danger text-center" role="alert" id="alertMessage">Có lỗi xảy ra khi tải lên tệp</div>';
-
     }
 }
-
 ?>
 
 <head>
@@ -217,7 +221,7 @@ if (isset($_POST['doi_anh'])) {
 </head>
 
 <body>
-    <?php session_abort();
+    <?php session_commit();
     require "../trangchu/header.php" ?>
     <div class="container-fluid mt-5">
         <div class="container">
