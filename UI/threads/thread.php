@@ -190,7 +190,7 @@ if (isset($thread_id)) {
                         <div class="post" id="<?php echo $post["post_id"] ?>">
                             <div class="post-number">#<?php echo $post_index++; ?></div>
                             <div style="margin: 10px; margin-right: 25px">
-                                <img src="<?php echo ($post['profile_pic']) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
+                                <img src="<?php echo ($post['profile_pic'] && realpath($post['profile_pic'])) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
                                     alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%;">
                                 <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
                             </div>

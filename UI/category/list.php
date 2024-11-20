@@ -235,7 +235,7 @@
                         </li>
                         <?php foreach ($threads_ca as $value): ?>
                             <li class="list-group-item d-flex">
-                                <img src="<?php echo !empty($value["profile_pic"]) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
+                                <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
                                     class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
                                 <div class="content-wrapper ">
                                     <a href="../threads/thread.php?id=<?php echo $value["thread_id"]; ?>"
