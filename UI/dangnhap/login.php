@@ -10,7 +10,7 @@ $dbname = "ntuchan";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Kiểm tra kết nối
-if ($conn->connect_error) {
+if ($conn->connect_error) { 
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 
@@ -31,6 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Kiểm tra nếu có bản ghi hợp lệ
     if ($result->num_rows == 1) {
         $user = $result->fetch_assoc();
+        $user_id = $user["user_id"];
+        $query = "UPDATE `Users` SET `last_logon` = NOW() WHERE `Users`.`user_id` = ? ;";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $user_id);  
+        $stmt->execute();
         $_SESSION["username"] = $user["username"];
         $_SESSION["user_id"] = $user["user_id"];
         $_SESSION["pfp"] = $user["profile_pic"];
