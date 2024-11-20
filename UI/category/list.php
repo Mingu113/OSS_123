@@ -286,16 +286,6 @@
                 <div class="sidebar">
                     <h4><?php echo "Tổng Số Lượng Thread: " . $total_threads; ?></h4>
                     </ul>
-                    <h4>Kết Nối Với Chúng Tôi</h4>
-                    <div>
-                        <a href="#"><img src="https://img.icons8.com/ios-filled/24/000000/facebook-new.png"
-                                alt="Facebook" /></a>
-                        <a href="#"><img src="https://img.icons8.com/ios-filled/24/000000/zalo.png" alt="Zalo" /></a>
-                        <a href="#"><img src="https://img.icons8.com/ios-filled/24/000000/twitter.png"
-                                alt="Twitter" /></a>
-                        <a href="#"><img src="https://img.icons8.com/ios-filled/24/000000/instagram-new.png"
-                                alt="Instagram" /></a>
-                    </div>
                 </div>
             </div>
         </div>
