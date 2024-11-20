@@ -114,21 +114,19 @@ if (isset($_POST["doi_major"])) {
 
 
 if (isset($_POST['doi_anh'])) {
-    // Kiểm tra xem tệp có được tải lên không
+
+
     if (isset($_FILES['img_files']) && $_FILES['img_files']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['img_files']['tmp_name'];
         $fileName = $_FILES['img_files']['name'];
         $fileSize = $_FILES['img_files']['size'];
         $fileType = $_FILES['img_files']['type'];
 
-        // Đường dẫn lưu tệp
         $uploadFileDir = './uploads/';
         $dest_path = $uploadFileDir . basename($fileName);
 
-        // Kiểm tra định dạng tệp (có thể tùy chỉnh)
         $allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($fileType, $allowedFileTypes)) {
-            // Di chuyển tệp đến thư mục uploads
             if (move_uploaded_file($fileTmpPath, $dest_path)) {
                 $query = "UPDATE users SET profile_pic = '$dest_path' WHERE user_id = $user_id";
                 if (mysqli_query($conn, $query)) {
