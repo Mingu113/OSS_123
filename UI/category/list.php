@@ -83,16 +83,12 @@
     $isLoggedIn = isset($_SESSION["user_id"]);
     if ($isLoggedIn) {
         $username = $_SESSION["username"];
-
-        // Truy vấn để lấy thông tin người dùng (bao gồm ảnh đại diện nếu có)
-        $query = "SELECT * FROM Users WHERE username = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
-
-        $profileImage = !empty($user["profile_pic"]) ? $user["profile_pic"] : "../images/default.jpg";
+        $user_id = $_SESSION["user_id"];
+        $query_check = mysqli_query($conn, "SELECT is_banned FROM Users WHERE user_id = $user_id;");
+        $user_is_banned = false;
+        if($result = $query_check->fetch_assoc()) {
+            if($result["is_banned"]) $user_is_banned = true;
+        }
     }
 
 
@@ -174,30 +170,8 @@
 
 
     ?>
+    <?php session_abort(); require "../trangchu/header.php" ?>
     <div class="container mt-5">
-        <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <form class="form-inline">
-                <div class="input-group">
-                    <input class="form-control" type="search" placeholder="Tìm kiếm..." aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-success" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <div>
-                <?php if ($isLoggedIn): ?>
-                    <!-- Hiển thị ảnh đại diện và tên tài khoản nếu đã đăng nhập -->
-                    <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
-                    <span><?php echo htmlspecialchars($username); ?></span>
-                <?php else: ?>
-                    <!-- Hiển nút Đăng Nhập nếu chưa đăng nhập -->
-                    <a href="../dangnhap/login.php" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
-                    <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
-                <?php endif; ?>
-            </div>
-        </div>
 
         <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#"><?php echo $name; ?></a>
         </span>
