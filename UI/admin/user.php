@@ -17,6 +17,8 @@ session_abort();
 $query = $conn->prepare("SELECT u.*, m.major_name FROM Users u LEFT JOIN Majors m ON m.major_id = u.major WHERE u.role = 'user'; ");
 $query->execute();
 $result = $query->get_result();
+$query_ban_user = $conn->prepare("UPDATE `Users` SET `is_banned` = '1', WHERE `Users`.`user_id` = ? ");
+
 ?>
 
 <head>
@@ -80,6 +82,7 @@ $result = $query->get_result();
     <div class="container mt-5 flex-grow-1">
         <h3>Danh Sách Người Dùng</h3>
         <?php while ($row = $result->fetch_assoc()): ?>
+            <form action="" method="post">
             <div class="user-item">
                 <img src="../images/default.jpg" class="user-avatar" alt="User Avatar">
                 <div class="user-info">
@@ -87,8 +90,10 @@ $result = $query->get_result();
                     <p>Email: <?php echo $row["email"]; ?></p>
                     <p>Khoa: <?php echo $row["major_name"]; ?></p>
                 </div>
-                <button class="btn btn-danger ban-button">Ban User</button>
+                <input type="hidden" name="user-id" value="<?php echo $row["user_id"] ;?>">
+                <button type="submit" name="ban-user" class="btn btn-danger ban-button">Ban User</button>
             </div>
+            </form>
         <?php endwhile; ?>
     </div>
 
