@@ -24,7 +24,7 @@ if ($isLoggedIn) {
 } else {
     $username = "";
 }
-$profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
+$profileImage = (!empty($_SESSION["pfp"]) && realpath($_SESSION["pfp"])) ? $_SESSION["pfp"] : "../images/default.jpg";
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
     <a class="navbar-brand" href="../trangchu/home.php">NTUCHAN</a>
