@@ -9,7 +9,12 @@ if (isset($_GET["id"]))
 if (isset($_GET["post"])) {
     $post_id = $_GET["post"];
 }
-
+$user_id = $_SESSION["user_id"];
+$query_check = mysqli_query($conn, "SELECT is_banned FROM Users WHERE user_id = $user_id;");
+$user_is_banned = false;
+if($result = $query_check->fetch_assoc()) {
+    if($result["is_banned"]) $user_is_banned = true;
+}
 // Gửi bài post mới
 if (isset($_POST['btn_post'])) {
     if (isset($_POST['postContent'])) {
@@ -201,8 +206,9 @@ if (isset($thread_id)) {
 
                     <?php endwhile; ?>
                 <?php endif; ?>
-
-                <?php if ($isLoggedIn && isset($thread_id) && $thread_is_available): ?>
+                <?php if($user_is_banned): ?>
+                    <h1 align="center">Không thể đăng bài viết<br>Bạn đã bị ban</h1>
+                <?php elseif ($isLoggedIn && isset($thread_id) && $thread_is_available): ?>
                     <!-- Form gửi bài post mới -->
                     <div class="new-post" id="new-post">
                         <h2>Người dùng: <?php echo $username; ?></h2>
@@ -216,12 +222,12 @@ if (isset($thread_id)) {
                         </form>
                     </div>
                 <?php elseif($thread_is_available): ?>
-                    <h1>Đăng nhập để đăng bài viết</h1>
+                    <h1 align="center">Đăng nhập để đăng bài viết</h1>
                 <?php endif; ?>
                 <?php if (!$thread_is_available): ?>
                     <div style="text-align: center;">
-                        <img src="../images/not_found.gif" alt="Image" width="60%">
-                        <h1>Không có bài thread này, có thể đã bị xóa hoặc không tồn tại</h1>
+                        <img align="center" src="../images/not_found.gif" alt="Image" width="60%">
+                        <h1 align="center">Không có bài thread này, có thể đã bị xóa hoặc không tồn tại</h1>
                     </div>
                 <?php endif; ?>
             </div>

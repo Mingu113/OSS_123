@@ -84,10 +84,12 @@
     if ($isLoggedIn) {
         $username = $_SESSION["username"];
         $user_id = $_SESSION["user_id"];
+
         $query_check = mysqli_query($conn, "SELECT is_banned FROM Users WHERE user_id = $user_id;");
         $user_is_banned = false;
-        if($result = $query_check->fetch_assoc()) {
-            if($result["is_banned"]) $user_is_banned = true;
+        if ($result = $query_check->fetch_assoc()) {
+            if ($result["is_banned"])
+                $user_is_banned = true;
         }
     }
 
@@ -170,10 +172,12 @@
 
 
     ?>
-    <?php session_abort(); require "../trangchu/header.php" ?>
+    <?php session_abort();
+    require "../trangchu/header.php" ?>
     <div class="container mt-5">
 
-        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#"><?php echo $name; ?></a>
+        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a
+                href="#"><?php echo $name; ?></a>
         </span>
         <!-- Thay bằng tên của Post -->
         <h3 class=""><?php echo $name; ?></h3>
@@ -207,8 +211,10 @@
                 </ul>
             </nav>
             <?php if ($isLoggedIn): ?>
-                <button class="btn post_btn" data-toggle="modal" data-target="#postModal"><i class="bi bi-pencil"></i> Post
-                    Thread</button>
+                <?php if (!$user_is_banned): ?>
+                    <button class="btn post_btn" data-toggle="modal" data-target="#postModal"><i class="bi bi-pencil"></i> Post
+                        Thread</button>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
         <div class="row">

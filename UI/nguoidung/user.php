@@ -6,6 +6,8 @@
     $isLoggedIn = isset($_SESSION["user_id"]);
     if ($isLoggedIn) {
         $user_id = $_SESSION["user_id"];
+        $username = $_SESSION["username"];
+
         $query = "SELECT * FROM `Users` WHERE user_id = $user_id";
         $result = mysqli_query($conn, $query);
 
@@ -14,8 +16,8 @@
             $username = $user_data["username"];
             $email = $user_data["email"];
             $major = $user_data["major"];
+            $user_is_banned = $user_data["is_banned"];
         }
-        $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
     } else {
         header("Location: ../trangchu/home.php");
     }
@@ -82,9 +84,6 @@
         $curr_password = $_POST['curr_password'];
         changePassword($user_id, $old_password, $new_password, $curr_password);
     }
-    if (isset($_GET['logout'])) {
-        session_unset();
-    }
     ?>
 
 <head>
@@ -144,23 +143,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
-        <a class="navbar-brand" href="../trangchu/home.php">NTUCHAN</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-            <?php require "../search/tool.php" ?>
-            <div>
-                <a href="" class="mr-3 text-decoration-none">
-                    <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="40" height="40">
-                    <span class="font-weight-bold text-white"><?php echo htmlspecialchars($username); ?></span>
-                </a>
-                <a href="?logout" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
-            </div>
-        </div>
-    </nav>
+    <?php session_abort(); require "../trangchu/header.php" ?>
     <div class="container-fluid mt-5">
         <div class="container">
             <div class="row">
@@ -180,6 +163,11 @@
                             <td class="spec_td">
                                 <?php echo $username ?>
                             </td>
+                            <?php if($user_is_banned): ?>
+                                <td>
+                                <p class="btn-danger">Người dùng đã bị ban</p>
+                                </td>
+                            <?php endif;?>
                         </tr>
                         <tr>
                             <td class="font-weight-bold">Email: </td>
@@ -237,13 +225,6 @@
             </div>
         </div>
     </div>
-
-    <footer class="text-center text-lg-start mt-5 bg-dark">
-        <div class="text-center text-white p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-            © 2024 Copyright:
-            <a class="text-white" href="#">NTUCHAN</a>
-        </div>
-    </footer>
 
 
     <div class="modal fade" id="changeEmailModalLabel" tabindex="-1" aria-labelledby="changeEmailModalLabel"
