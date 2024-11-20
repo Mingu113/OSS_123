@@ -88,26 +88,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
-        <a class="navbar-brand" href="#">NTUCHAN</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            <div>
-                <a href="#" class="mr-3 text-decoration-none">
-                    <img src="../images/default.jpg" class="rounded-circle" width="40" height="40">
-                    <span class="font-weight-bold text-white">User123</span>
-                </a>
-                <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
-            </div>
-        </div>
-    </nav>
+    <?php session_abort(); require "../trangchu/header.php";?>
 
     <div class="container mt-5 flex-grow-1">
         <div class="flex-container">
@@ -176,10 +157,6 @@
                 </a>
             </div>
         </div>
-    </div>
-
-    <div class="footer">
-        <p>&copy; 2024 NTUCHAN. All rights reserved.</p>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
