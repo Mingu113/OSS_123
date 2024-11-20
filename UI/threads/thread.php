@@ -32,11 +32,7 @@ if (isset($_POST['btn_post'])) {
         };
         </script>';
 
-        if ($stmt->execute()) {
-            echo "Bài viết đã được thêm thành công!";
-        } else {
-            echo "Lỗi khi thêm bài viết: " . $stmt->error;
-        }
+        if ($stmt->execute());
     } else {
         echo "Vui lòng điền đầy đủ thông tin.";
     }
