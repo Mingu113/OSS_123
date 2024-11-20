@@ -14,13 +14,15 @@ while($user_check = $result->fetch_assoc()) {
 }
 if(!$is_admin) header("Location: ../trangchu/home.php");
 session_abort();
+if(isset($_GET["ban_user"])) {
+    $query_ban_user = $conn->prepare("UPDATE `Users` SET `is_banned` = ? WHERE `Users`.`user_id` = ? ;"); 
+    $query_ban_user->bind_param("ii", $_GET["ban_user"],$_GET["user-id"]);
+    $query_ban_user->execute();
+}
 $query = $conn->prepare("SELECT u.*, m.major_name FROM Users u LEFT JOIN Majors m ON m.major_id = u.major WHERE u.role = 'user'; ");
 $query->execute();
 $result = $query->get_result();
-$query_ban_user = $conn->prepare("UPDATE `Users` SET `is_banned` = '1', WHERE `Users`.`user_id` = ? ");
-
 ?>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -82,16 +84,21 @@ $query_ban_user = $conn->prepare("UPDATE `Users` SET `is_banned` = '1', WHERE `U
     <div class="container mt-5 flex-grow-1">
         <h3>Danh Sách Người Dùng</h3>
         <?php while ($row = $result->fetch_assoc()): ?>
-            <form action="" method="post">
+            <form action="" method="get">
             <div class="user-item">
                 <img src="../images/default.jpg" class="user-avatar" alt="User Avatar">
                 <div class="user-info">
+                <?php if($row["is_banned"]) echo '<small style="color: red;">Người dùng đã bị ban</small>'; else echo ""; ?>
                     <h5><?php echo $row["username"]; ?></h5>
                     <p>Email: <?php echo $row["email"]; ?></p>
                     <p>Khoa: <?php echo $row["major_name"]; ?></p>
                 </div>
                 <input type="hidden" name="user-id" value="<?php echo $row["user_id"] ;?>">
-                <button type="submit" name="ban-user" class="btn btn-danger ban-button">Ban User</button>
+                <?php if($row["is_banned"] == 0):?>
+                <button type="submit" name="ban_user" value="1" class="btn btn-danger ban-button">Ban người dùng</button>
+                <?php else: ?>
+                <button type="submit" name="ban_user" value="0" class="btn btn-success ban-button">Unban người dùng</button>
+                <?php endif;?>
             </div>
             </form>
         <?php endwhile; ?>
