@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 17, 2024 at 04:02 PM
+-- Generation Time: Nov 20, 2024 at 05:18 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -173,7 +173,14 @@ INSERT INTO `Posts` (`post_id`, `thread_id`, `user_id`, `content`, `created_at`)
 (55, 2, 36, 'Hello \\r\\n', '2024-11-17 13:51:05'),
 (56, 2, 36, 'Hello \r\n', '2024-11-17 13:52:41'),
 (57, 2, 36, 'Hello \\r\\n\\r\\n', '2024-11-17 13:55:08'),
-(58, 2, 36, 'Hello\\r\\n\\r\\n\\r\\n', '2024-11-17 13:55:31');
+(58, 2, 36, 'Hello\\r\\n\\r\\n\\r\\n', '2024-11-17 13:55:31'),
+(59, 14, 36, 'PHP quá khốn nạn, tại sao không cần init vẫn có thể dùng, mà trên linux thì display_error = off là mặc định', '2024-11-17 15:10:59'),
+(60, 14, 37, 'Hay quá bạn ơi, bạn nói chuẩn', '2024-11-17 15:13:14'),
+(61, 14, 36, 'Mình cảm ơn bạn', '2024-11-17 15:16:41'),
+(62, 14, 36, 'ありがとうございました、minh123さん', '2024-11-17 15:31:01'),
+(63, 15, 36, 'Như tiêu đề', '2024-11-17 15:46:34'),
+(64, 15, 36, '4 năm đóng đầy đủ bảo hiểm, chưa một lần đi khám trĩ', '2024-11-17 15:47:19'),
+(65, 14, 36, 'aaasdsadsada', '2024-11-19 02:26:09');
 
 -- --------------------------------------------------------
 
@@ -198,14 +205,14 @@ CREATE TABLE `Threads` (
 INSERT INTO `Threads` (`thread_id`, `title`, `category_id`, `created_at`, `newest_post_at`, `posts_count`, `is_pinned`) VALUES
 (1, 'Thread test', 1, '2024-11-11 12:13:43', NULL, NULL, 1),
 (2, 'Thread test số 2', 1, '2024-11-13 13:45:48', NULL, NULL, 0),
-(6, 'aaa', 1, '2024-11-14 11:45:34', NULL, NULL, 0),
 (7, 'test', 1, '2024-11-14 11:46:36', NULL, NULL, 0),
 (8, 'test', 1, '2024-11-14 11:46:57', NULL, NULL, 0),
 (9, 'aaasss', 1, '2024-11-14 11:47:12', NULL, NULL, 0),
 (10, 'aa', 1, '2024-11-14 11:48:36', NULL, NULL, 0),
 (11, 'test', 1, '2024-11-14 11:49:30', NULL, NULL, 0),
 (12, 'cccc', 1, '2024-11-14 12:14:21', NULL, NULL, 0),
-(13, 'testtt', 3, '2024-11-15 23:51:40', NULL, NULL, 0);
+(14, 'PHP quá khốn nạn', 3, '2024-11-17 15:10:59', NULL, NULL, 0),
+(15, 'Nếu có 10 tỉ trong tay, tôi sẽ gacha 10 triệu', 4, '2024-11-17 15:46:34', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -220,6 +227,7 @@ CREATE TABLE `Users` (
   `password_hash` varchar(64) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
   `major` int(11) DEFAULT NULL,
+  `is_banned` tinyint(1) DEFAULT 0,
   `profile_pic` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `last_logon` timestamp NULL DEFAULT NULL
@@ -229,11 +237,11 @@ CREATE TABLE `Users` (
 -- Dumping data for table `Users`
 --
 
-INSERT INTO `Users` (`user_id`, `username`, `role`, `password_hash`, `email`, `major`, `profile_pic`, `created_at`, `last_logon`) VALUES
-(1, 'mingu', 'user', 'admin', NULL, NULL, NULL, '2024-11-11 12:14:41', NULL),
-(36, 'minh', 'admin', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', NULL, 3, NULL, '2024-11-13 12:26:10', NULL),
-(37, 'minh123', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'mingu@yandex.ru', NULL, NULL, '2024-11-13 12:26:22', NULL),
-(44, 'test', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'test@example.com', NULL, NULL, '2024-11-17 15:00:32', NULL);
+INSERT INTO `Users` (`user_id`, `username`, `role`, `password_hash`, `email`, `major`, `is_banned`, `profile_pic`, `created_at`, `last_logon`) VALUES
+(1, 'mingu', 'user', 'admin', NULL, NULL, 0, NULL, '2024-11-11 12:14:41', NULL),
+(36, 'minh', 'admin', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', NULL, 3, 0, NULL, '2024-11-13 12:26:10', '2024-11-20 04:16:16'),
+(37, 'minh123', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'mingu@yandex.ru', NULL, 0, NULL, '2024-11-13 12:26:22', NULL),
+(44, 'test', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'test@example.com', NULL, 1, NULL, '2024-11-17 15:00:32', '2024-11-20 04:10:23');
 
 --
 -- Indexes for dumped tables
@@ -326,13 +334,13 @@ ALTER TABLE `Notifications`
 -- AUTO_INCREMENT for table `Posts`
 --
 ALTER TABLE `Posts`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `Threads`
 --
 ALTER TABLE `Threads`
-  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `Users`
@@ -360,7 +368,6 @@ ALTER TABLE `Notifications`
 -- Constraints for table `Posts`
 --
 ALTER TABLE `Posts`
-  ADD CONSTRAINT `post_thread_fk` FOREIGN KEY (`thread_id`) REFERENCES `Threads` (`thread_id`),
   ADD CONSTRAINT `post_user_fk` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`);
 
 --
