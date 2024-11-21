@@ -33,7 +33,7 @@ $profileImage = (!empty($_SESSION["pfp"]) && realpath($_SESSION["pfp"])) ? $_SES
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-        <?php require "../search/tool.php" ?>
+        <?php require "../timkiem/tool.php" ?>
         <div>
             <?php if (!empty($username)): ?>
                 <!-- Dropdown -->
