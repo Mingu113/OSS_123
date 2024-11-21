@@ -13,69 +13,82 @@
             background-color: #f8f9fa;
         }
 
-        .header-section {
+        .list-group {
+            width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            list-style: none;
+        }
+
+        .list-group-item {
+            display: flex;
+            align-items: flex-start;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #ffffff;
+            padding: 15px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
         .list-group-item img {
-            width: 35px;
-            height: 35px;
-            margin-right: 10px;
-        }
-
-        .list-group-item a {
-            text-decoration: none;
-            color: #000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            margin-right: 15px;
         }
 
         .content-wrapper {
             display: flex;
             flex-direction: column;
-            text-decoration: none;
-            transition: color 0.3s ease;
+            flex-grow: 1;
         }
 
-        .content-wrapper a {
+        .content-wrapper .topic-name {
+            font-size: 1.1rem;
+            font-weight: bold;
             color: #479fdf;
+            text-decoration: none;
         }
 
-        .content-wrapper a.topic-name:hover {
+        .content-wrapper .topic-name:hover {
             color: orange;
         }
 
-        .post_btn {
-            margin-left: 435px;
-            background-color: orange;
-            color: white;
-            height: 40px;
-
+        .content-wrapper div {
+            font-size: 0.9rem;
+            color: #666;
         }
 
-        .filter_btn {
-            border: none;
-            background-color: #f1f8fd;
+        .content-wrapper span {
+            font-size: 0.9rem;
+            color: #888;
         }
 
-        .dropdown-menu {
-            position: absolute;
-            background-color: white;
-            margin-right: 600px;
-            border-top: 5px solid cyan;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        .post {
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: start;
+            position: relative;
         }
 
-        .li_nav {
-            background-color: #f1f8fd;
-        }
         .highlight {
-            background-color: yellow; /* Màu nền cho phần tìm thấy */
-            font-weight: bold; /* Đậm chữ */
+            background-color: yellow;
+            /* Màu nền cho phần tìm thấy */
+            font-weight: bold;
+            /* Đậm chữ */
         }
     </style>
 </head>
 
 <body>
-<?php
+    <?php
     require "../trangchu/config.php";
     session_start(); // start session
     $isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
@@ -91,14 +104,15 @@
     // Lấy dữ liệu từ form hoặc URL
     $key = $_POST['search'] ?? $_GET['search'] ?? null;
     // Chống tấn công SQL Injection
-    if($key){
+    if ($key) {
         $key = addslashes($key);
-    }else{
+    } else {
         echo "<script>alert('Lỗi: Dữ liệu nhập không hợp lệ. Vui lòng nhập lại.'); window.history.back();</script>";
         exit();
     }
     // Highlight các từ khóa tìm kiếm
-    function highlight($text, $key) {
+    function highlight($text, $key)
+    {
         return preg_replace('/(' . preg_quote($key, '/') . ')/i', '<span class="highlight">$1</span>', $text);
     }
 
@@ -122,7 +136,7 @@
     $offset = ($page - 1) * $search_per_page;
 
     // Truy vấn lấy dữ liệu theo title có key của các threads mà trong đó không có posts nào chứa key
-    $threads_no_posts= "SELECT 
+    $threads_no_posts = "SELECT 
         Threads.thread_id, 
         Threads.Title, 
         Threads.category_id, 
@@ -145,7 +159,7 @@
         WHERE Posts.content LIKE '%$key%'
     )";
     // Truy vấn tất cả các posts
-    $all_posts= "SELECT 
+    $all_posts = "SELECT 
         Threads.thread_id, 
         Threads.Title, 
         Threads.category_id, 
@@ -180,7 +194,8 @@
         session_unset();
     }
     ?>
-     <?php session_abort(); require "../trangchu/header.php" ?>
+    <?php session_abort();
+    require "../trangchu/header.php" ?>
     <div class="container mt-5">
 
         <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Thread name?</a>
@@ -217,15 +232,15 @@
             </nav>
         </div>
         <div class="row">
-            
+
             <ul class="list-group">
                 <?php foreach ($search_results as $value): ?>
                     <li class="list-group-item d-flex">
-                    <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
-                    class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
+                        <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
+                            class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
                         <div class="content-wrapper ">
                             <a href="../threads/thread.php?id=<?php echo urlencode($value['thread_id']); ?>&post=<?php echo urldecode($value['post_id']) ?>"
-                                class="topic-name font-weight-bold"><?php echo highlight(htmlspecialchars($value['Title']),$key); ?></a>
+                                class="topic-name font-weight-bold"><?php echo highlight(htmlspecialchars($value['Title']), $key); ?></a>
                             <span><?php echo htmlspecialchars($value['post_content']); ?></span>
                             <div><span><?php echo $value['username'] ?></span> |
                                 <span><?php echo highlight(htmlspecialchars($value['post_created_at']), $key); ?></span>

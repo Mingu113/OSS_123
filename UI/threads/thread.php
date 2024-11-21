@@ -12,8 +12,9 @@ if (isset($_GET["post"])) {
 $user_id = $_SESSION["user_id"];
 $query_check = mysqli_query($conn, "SELECT is_banned FROM Users WHERE user_id = $user_id;");
 $user_is_banned = false;
-if($result = $query_check->fetch_assoc()) {
-    if($result["is_banned"]) $user_is_banned = true;
+if ($result = $query_check->fetch_assoc()) {
+    if ($result["is_banned"])
+        $user_is_banned = true;
 }
 // Gửi bài post mới
 if (isset($_POST['btn_post'])) {
@@ -34,21 +35,39 @@ if (isset($_POST['btn_post'])) {
         };
         </script>';
 
-        if ($stmt->execute()) $update_thread_query->execute();
+        if ($stmt->execute())
+            $update_thread_query->execute();
     } else {
         echo "Vui lòng điền đầy đủ thông tin.";
     }
 }
 if (isset($thread_id)) {
+    // Đếm tổng số post thuộc threads
+    $total_post_query = "SELECT COUNT(DISTINCT Posts.post_id) AS total
+   FROM Posts
+   WHERE Posts.thread_id = $thread_id";
+
+    $total_post_results = mysqli_query($conn, $total_post_query);
+    $total_post = mysqli_fetch_assoc($total_post_results)['total'];
+    // Số lượng threads mỗi trang
+    $posts_per_page = 10;
+
+    // Số trang hiện tại từ URL hoặc mặc định là 1
+    $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+    if ($page < 1)
+        $page = 1;
+
+    // Tính vị trí cho giới hạn phân trang
+    $offset = ($page - 1) * $posts_per_page;
     // Truy vấn để lấy tất cả bài viết
-    $query_posts = "
-        SELECT DISTINCT p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title, u.role, u.is_banned
-        FROM Posts p
-        JOIN Users u ON u.user_id = p.user_id
-        JOIN Threads t ON t.thread_id = p.thread_id
-        WHERE p.thread_id = $thread_id
-        ORDER BY p.created_at ASC
-    ";
+    $query_posts = "SELECT DISTINCT 
+   p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
+   FROM Posts p
+   JOIN Users u ON u.user_id = p.user_id
+   JOIN Threads t ON t.thread_id = p.thread_id
+   WHERE p.thread_id = $thread_id
+   ORDER BY p.created_at ASC
+   LIMIT $offset, $posts_per_page;";
     $stmt_posts = $conn->prepare($query_posts);
     $stmt_posts->execute();
     $posts_result = $stmt_posts->get_result();
@@ -72,6 +91,8 @@ if (isset($thread_id)) {
         };
         </script>';
     }
+    // Tính tổng số trang
+    $total_pages = ceil($total_post / $posts_per_page);
 } else
     $thread_title = "Không có Thread";
 $conn->close();
@@ -174,6 +195,7 @@ $conn->close();
             padding: 10px;
             font-size: 16px;
         }
+
         .user-role {
             border: solid 1px;
             padding: 2px;
@@ -200,24 +222,56 @@ $conn->close();
                                 <img src="<?php echo ($post['profile_pic'] && realpath($post['profile_pic'])) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
                                     alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%;">
                                 <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
-                                <?php if($post["role"] != "user"):?>
-                                <p class="user-role"><small><span style="color: green;"><?php echo $post["role"];?></small></span></p>
+                                <?php if ($post["role"] != "user"): ?>
+                                    <p class="user-role"><small><span
+                                                style="color: green;"><?php echo $post["role"]; ?></small></span></p>
                                 <?php else: ?>
-                                <p class="user-role"><small><span style="color: black;"><?php echo $post["role"];?></small></span></p>
-                                <?php endif;?>
+                                    <p class="user-role"><small><span
+                                                style="color: black;"><?php echo $post["role"]; ?></small></span></p>
+                                <?php endif; ?>
                             </div>
                             <div class="post-content">
                                 <p><?php echo nl2br(stripcslashes($post['content'])); ?></p>
                                 <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
-                                <?php if($post["is_banned"] == 1):?>
+                                <?php if ($post["is_banned"] == 1): ?>
                                     <p><span style="color: red;"><small>Người dùng này đã bị ban</small></span></p>
-                                <?php endif;?>
+                                <?php endif; ?>
                             </div>
                         </div>
 
                     <?php endwhile; ?>
                 <?php endif; ?>
-                <?php if($user_is_banned): ?>
+                <div class="d-flex">
+                    <!-- Liên kết phân trang -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <?php if ($page > 1): ?>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="thread.php?id=<?php echo urlencode($thread_id); ?>&page=<?php echo $page - 1; ?>">Trang
+                                        trước</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <li class="page-item <?php if ($i == $page)
+                                    echo 'active'; ?>">
+                                    <a class="page-link"
+                                        href="thread.php?id=<?php echo urlencode($thread_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <?php if ($page < $total_pages): ?>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="thread.php?id=<?php echo urlencode($thread_id); ?>&page=<?php echo $page + 1; ?>">Trang
+                                        sau</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
+                </div>
+                <?php if ($user_is_banned): ?>
                     <h1 align="center">Không thể đăng bài viết<br>Bạn đã bị ban</h1>
                 <?php elseif ($isLoggedIn && isset($thread_id) && $thread_is_available): ?>
                     <!-- Form gửi bài post mới -->
@@ -232,7 +286,7 @@ $conn->close();
                             <button type="submit" class="btn btn-primary" name="btn_post">Đăng</button>
                         </form>
                     </div>
-                <?php elseif($thread_is_available): ?>
+                <?php elseif ($thread_is_available): ?>
                     <h1 align="center">Đăng nhập để đăng bài viết</h1>
                 <?php endif; ?>
                 <?php if (!$thread_is_available): ?>
