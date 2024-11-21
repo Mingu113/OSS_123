@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 20, 2024 at 05:18 AM
+-- Generation Time: Nov 21, 2024 at 06:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -114,6 +114,7 @@ CREATE TABLE `Posts` (
   `thread_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `content` text NOT NULL,
+  `post_images` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -121,66 +122,46 @@ CREATE TABLE `Posts` (
 -- Dumping data for table `Posts`
 --
 
-INSERT INTO `Posts` (`post_id`, `thread_id`, `user_id`, `content`, `created_at`) VALUES
-(1, 1, 1, 'Test', '2024-11-11 12:14:58'),
-(2, 1, 36, 'Tét 1', '2024-11-13 12:47:30'),
-(3, 1, 37, 'askdjhsakdjsadkj h', '2024-11-13 12:47:46'),
-(10, 1, 37, 'こんにちは', '2024-11-13 13:33:20'),
-(11, 2, 1, 'aaaaa', '2024-11-13 13:46:19'),
-(12, 1, 37, 'ssladkj als\\r\\n', '2024-11-14 03:15:35'),
-(13, 1, 37, 'Test message', '2024-11-14 03:15:47'),
-(14, 1, 37, '2', '2024-11-14 03:16:37'),
-(15, 1, 37, '1111', '2024-11-14 03:16:40'),
-(16, 1, 37, 'ấds', '2024-11-14 03:16:43'),
-(17, 1, 37, 'https://www.youtube.com/watch?v=2sbYlr0L4L0&list=RD_YnwnxSE2UA&index=3\\r\\n', '2024-11-14 03:16:53'),
-(18, 1, 37, 'https://www.youtube.com/watch?v=2sbYlr0L4L0&list=RD_YnwnxSE2UA&index=3', '2024-11-14 03:17:04'),
-(19, 1, 37, 'dsaodjaslkdj salkd\\r\\naoskdnasldksand\\\'sak nsald\\r\\n', '2024-11-14 03:17:12'),
-(20, 1, 37, 'sao lại có escape characters\\r\\n', '2024-11-14 03:17:29'),
-(21, 1, 37, 'sao lại có escape characters\\r\\n', '2024-11-14 03:17:45'),
-(22, 1, 37, 'asdasd asdadas d', '2024-11-14 03:18:02'),
-(23, 1, 37, 'Một hai ba\\r\\nBốn năm sáu', '2024-11-14 03:18:14'),
-(24, 1, 37, 'bảy', '2024-11-14 03:18:22'),
-(25, 1, 37, 'test', '2024-11-14 03:19:12'),
-(26, 1, 37, 'test', '2024-11-14 03:19:23'),
-(27, 1, 37, 'test', '2024-11-14 03:20:19'),
-(28, 6, 36, 'ssss', '2024-11-14 11:45:34'),
-(29, 7, 36, 'hello', '2024-11-14 11:46:36'),
-(30, 8, 36, 'hello', '2024-11-14 11:46:57'),
-(31, 9, 36, 'sssssdddd', '2024-11-14 11:47:12'),
-(32, 10, 36, 'sd', '2024-11-14 11:48:36'),
-(33, 11, 36, 'asdasd', '2024-11-14 11:49:30'),
-(34, 11, 36, 'Hello', '2024-11-14 11:49:34'),
-(35, 11, 36, 'Hello', '2024-11-14 11:49:38'),
-(36, 1, 36, 'aaa', '2024-11-14 11:50:06'),
-(37, 1, 36, 'sdd', '2024-11-14 11:50:09'),
-(38, 11, 36, 'sASA', '2024-11-14 11:50:18'),
-(39, 1, 36, 'dddd', '2024-11-14 11:50:31'),
-(40, 1, 36, 'ssaa', '2024-11-14 11:50:58'),
-(41, 1, 36, 'dd', '2024-11-14 11:53:20'),
-(42, 1, 36, 'dd', '2024-11-14 11:53:25'),
-(43, 11, 36, 'dd', '2024-11-14 12:04:41'),
-(44, 2, 36, 'cccc', '2024-11-14 12:06:53'),
-(45, 2, 36, 'cccc', '2024-11-14 12:07:06'),
-(46, 2, 36, 'ssadas', '2024-11-14 12:07:45'),
-(47, 2, 36, 'xxxx', '2024-11-14 12:08:34'),
-(48, 2, 36, ' ccc', '2024-11-14 12:08:45'),
-(49, 12, 36, 'ccccccc', '2024-11-14 12:14:21'),
-(50, 13, 36, 'hello', '2024-11-15 23:51:40'),
-(51, 13, 36, 'xin chao', '2024-11-15 23:51:46'),
-(52, 2, 36, 'hello\\r\\n', '2024-11-17 13:44:01'),
-(53, 2, 36, 'hello \\r\\n', '2024-11-17 13:46:36'),
-(54, 2, 36, 'hello\\r\\n', '2024-11-17 13:48:36'),
-(55, 2, 36, 'Hello \\r\\n', '2024-11-17 13:51:05'),
-(56, 2, 36, 'Hello \r\n', '2024-11-17 13:52:41'),
-(57, 2, 36, 'Hello \\r\\n\\r\\n', '2024-11-17 13:55:08'),
-(58, 2, 36, 'Hello\\r\\n\\r\\n\\r\\n', '2024-11-17 13:55:31'),
-(59, 14, 36, 'PHP quá khốn nạn, tại sao không cần init vẫn có thể dùng, mà trên linux thì display_error = off là mặc định', '2024-11-17 15:10:59'),
-(60, 14, 37, 'Hay quá bạn ơi, bạn nói chuẩn', '2024-11-17 15:13:14'),
-(61, 14, 36, 'Mình cảm ơn bạn', '2024-11-17 15:16:41'),
-(62, 14, 36, 'ありがとうございました、minh123さん', '2024-11-17 15:31:01'),
-(63, 15, 36, 'Như tiêu đề', '2024-11-17 15:46:34'),
-(64, 15, 36, '4 năm đóng đầy đủ bảo hiểm, chưa một lần đi khám trĩ', '2024-11-17 15:47:19'),
-(65, 14, 36, 'aaasdsadsada', '2024-11-19 02:26:09');
+INSERT INTO `Posts` (`post_id`, `thread_id`, `user_id`, `content`, `post_images`, `created_at`) VALUES
+(1, 1, 1, 'Test', NULL, '2024-11-11 12:14:58'),
+(2, 1, 36, 'Tét 1', NULL, '2024-11-13 12:47:30'),
+(3, 1, 37, 'askdjhsakdjsadkj h', NULL, '2024-11-13 12:47:46'),
+(10, 1, 37, 'こんにちは', NULL, '2024-11-13 13:33:20'),
+(12, 1, 37, 'ssladkj als\\r\\n', NULL, '2024-11-14 03:15:35'),
+(13, 1, 37, 'Test message', NULL, '2024-11-14 03:15:47'),
+(14, 1, 37, '2', NULL, '2024-11-14 03:16:37'),
+(15, 1, 37, '1111', NULL, '2024-11-14 03:16:40'),
+(16, 1, 37, 'ấds', NULL, '2024-11-14 03:16:43'),
+(17, 1, 37, 'https://www.youtube.com/watch?v=2sbYlr0L4L0&list=RD_YnwnxSE2UA&index=3\\r\\n', NULL, '2024-11-14 03:16:53'),
+(18, 1, 37, 'https://www.youtube.com/watch?v=2sbYlr0L4L0&list=RD_YnwnxSE2UA&index=3', NULL, '2024-11-14 03:17:04'),
+(19, 1, 37, 'dsaodjaslkdj salkd\\r\\naoskdnasldksand\\\'sak nsald\\r\\n', NULL, '2024-11-14 03:17:12'),
+(20, 1, 37, 'sao lại có escape characters\\r\\n', NULL, '2024-11-14 03:17:29'),
+(21, 1, 37, 'sao lại có escape characters\\r\\n', NULL, '2024-11-14 03:17:45'),
+(22, 1, 37, 'asdasd asdadas d', NULL, '2024-11-14 03:18:02'),
+(23, 1, 37, 'Một hai ba\\r\\nBốn năm sáu', NULL, '2024-11-14 03:18:14'),
+(24, 1, 37, 'bảy', NULL, '2024-11-14 03:18:22'),
+(25, 1, 37, 'test', NULL, '2024-11-14 03:19:12'),
+(26, 1, 37, 'test', NULL, '2024-11-14 03:19:23'),
+(27, 1, 37, 'test', NULL, '2024-11-14 03:20:19'),
+(28, 6, 36, 'ssss', NULL, '2024-11-14 11:45:34'),
+(36, 1, 36, 'aaa', NULL, '2024-11-14 11:50:06'),
+(37, 1, 36, 'sdd', NULL, '2024-11-14 11:50:09'),
+(39, 1, 36, 'dddd', NULL, '2024-11-14 11:50:31'),
+(40, 1, 36, 'ssaa', NULL, '2024-11-14 11:50:58'),
+(41, 1, 36, 'dd', NULL, '2024-11-14 11:53:20'),
+(42, 1, 36, 'dd', NULL, '2024-11-14 11:53:25'),
+(50, 13, 36, 'hello', NULL, '2024-11-15 23:51:40'),
+(51, 13, 36, 'xin chao', NULL, '2024-11-15 23:51:46'),
+(59, 14, 36, 'PHP quá khốn nạn, tại sao không cần init vẫn có thể dùng, mà trên linux thì display_error = off là mặc định', NULL, '2024-11-17 15:10:59'),
+(60, 14, 37, 'Hay quá bạn ơi, bạn nói chuẩn', NULL, '2024-11-17 15:13:14'),
+(61, 14, 36, 'Mình cảm ơn bạn', NULL, '2024-11-17 15:16:41'),
+(62, 14, 36, 'ありがとうございました、minh123さん', NULL, '2024-11-17 15:31:01'),
+(63, 15, 36, 'Như tiêu đề', NULL, '2024-11-17 15:46:34'),
+(65, 14, 36, 'aaasdsadsada', NULL, '2024-11-19 02:26:09'),
+(68, 1, 36, 'alo', NULL, '2024-11-20 13:30:51'),
+(69, 1, 36, 'hello', NULL, '2024-11-20 13:30:58'),
+(70, 1, 36, 'cyka', NULL, '2024-11-20 13:31:12'),
+(71, 1, 36, 'hello', NULL, '2024-11-20 13:33:20');
 
 -- --------------------------------------------------------
 
@@ -203,16 +184,11 @@ CREATE TABLE `Threads` (
 --
 
 INSERT INTO `Threads` (`thread_id`, `title`, `category_id`, `created_at`, `newest_post_at`, `posts_count`, `is_pinned`) VALUES
-(1, 'Thread test', 1, '2024-11-11 12:13:43', NULL, NULL, 1),
-(2, 'Thread test số 2', 1, '2024-11-13 13:45:48', NULL, NULL, 0),
-(7, 'test', 1, '2024-11-14 11:46:36', NULL, NULL, 0),
-(8, 'test', 1, '2024-11-14 11:46:57', NULL, NULL, 0),
-(9, 'aaasss', 1, '2024-11-14 11:47:12', NULL, NULL, 0),
-(10, 'aa', 1, '2024-11-14 11:48:36', NULL, NULL, 0),
-(11, 'test', 1, '2024-11-14 11:49:30', NULL, NULL, 0),
-(12, 'cccc', 1, '2024-11-14 12:14:21', NULL, NULL, 0),
-(14, 'PHP quá khốn nạn', 3, '2024-11-17 15:10:59', NULL, NULL, 0),
-(15, 'Nếu có 10 tỉ trong tay, tôi sẽ gacha 10 triệu', 4, '2024-11-17 15:46:34', NULL, NULL, 0);
+(14, 'PHP quá khốn nạn', 3, '2024-11-17 15:10:59', '2024-11-21 16:44:20', NULL, 0),
+(15, 'Nếu có 10 tỉ trong tay, tôi sẽ gacha 10 triệu', 4, '2024-11-17 15:46:34', '2024-11-21 16:52:18', NULL, 0),
+(16, 'Thread test', 4, '2024-11-21 12:21:22', '2024-11-21 12:22:55', NULL, 0),
+(17, 'thread test 2 ', 4, '2024-11-21 12:27:31', '2024-11-21 12:45:33', NULL, 0),
+(18, 'thread test', 4, '2024-11-21 12:47:09', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -239,9 +215,10 @@ CREATE TABLE `Users` (
 
 INSERT INTO `Users` (`user_id`, `username`, `role`, `password_hash`, `email`, `major`, `is_banned`, `profile_pic`, `created_at`, `last_logon`) VALUES
 (1, 'mingu', 'user', 'admin', NULL, NULL, 0, NULL, '2024-11-11 12:14:41', NULL),
-(36, 'minh', 'admin', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', NULL, 3, 0, NULL, '2024-11-13 12:26:10', '2024-11-20 04:16:16'),
+(36, 'minh', 'admin', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', NULL, 3, 0, '../images/userpfp/1728702329847875.png', '2024-11-13 12:26:10', '2024-11-21 12:58:42'),
 (37, 'minh123', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'mingu@yandex.ru', NULL, 0, NULL, '2024-11-13 12:26:22', NULL),
-(44, 'test', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'test@example.com', NULL, 1, NULL, '2024-11-17 15:00:32', '2024-11-20 04:10:23');
+(44, 'test', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 'test@example.com', NULL, 1, NULL, '2024-11-17 15:00:32', '2024-11-21 12:46:59'),
+(45, 'minhtest', 'user', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', NULL, NULL, 0, NULL, '2024-11-20 10:42:06', NULL);
 
 --
 -- Indexes for dumped tables
@@ -334,19 +311,19 @@ ALTER TABLE `Notifications`
 -- AUTO_INCREMENT for table `Posts`
 --
 ALTER TABLE `Posts`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=158;
 
 --
 -- AUTO_INCREMENT for table `Threads`
 --
 ALTER TABLE `Threads`
-  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `Users`
 --
 ALTER TABLE `Users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- Constraints for dumped tables
