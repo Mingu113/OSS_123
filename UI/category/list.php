@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <title>Trang Chủ Diễn Đàn</title>
+    <title>Diễn Đàn</title>
     <style>
         body {
             background-color: #f8f9fa;
@@ -55,14 +55,6 @@
         .filter_btn {
             border: none;
             background-color: #f1f8fd;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            background-color: white;
-            margin-right: 600px;
-            border-top: 5px solid cyan;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .li_nav {
@@ -120,6 +112,7 @@
 
     $name = $_GET["name"];
     $category_id = $_GET['category_id'];
+    $sort = $_GET["sort"];
 
     // Tìm kiếm trong bảng categories
     $search_ca = "SELECT * FROM `Categories` WHERE `name` LIKE '%$name%'";
@@ -129,6 +122,8 @@
 
 
     // Đếm tổng số threads thuộc category này
+    if($sort == "post") $sort = "newest_post_at";
+    else if ($sort = "thread") $sort = "created_at";
     $count_th_ca_query = "SELECT COUNT(*) as total FROM `Threads` WHERE `category_id` = $category_id";
     $count_th_ca_result = mysqli_query($conn, $count_th_ca_query);
     $total_threads = mysqli_fetch_assoc($count_th_ca_result)['total'];
@@ -159,6 +154,7 @@
         WHERE p2.thread_id = t.thread_id
     )
     AND t.category_id = $category_id
+    ORDER BY $sort DESC 
     LIMIT $offset, $threads_per_page";
 
     $result_threads_ca = mysqli_query($conn, $search_th_ca);
@@ -227,10 +223,14 @@
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Sort
                                 </button>
+                                <form action="" method="get">
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <button class="dropdown-item">Bài đăng mới nhất</button>
-                                    <button class="dropdown-item">Bình luận mới nhất</button>
+                                    <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
+                                    <input type="hidden" name="name" value="<?php echo $name; ?>">
+                                    <button class="dropdown-item" name="sort" value="thread">Bài đăng mới nhất</button>
+                                    <button class="dropdown-item" name="sort" value="post">Bình luận mới nhất</button>
                                 </div>
+                                </form>
                             </div>
                         </li>
                         <?php foreach ($threads_ca as $value): ?>
