@@ -12,7 +12,7 @@ while($user_check = $result->fetch_assoc()) {
         $is_admin = true;
     }
 }
-if(!$is_admin) header("Location: ../trangchu/home.php");
+if(!$is_admin) header("Location: ./index.php");
 session_abort();
 if(isset($_GET["ban_user"])) {
     $query_ban_user = $conn->prepare("UPDATE `Users` SET `is_banned` = ? WHERE `Users`.`user_id` = ? ;"); 

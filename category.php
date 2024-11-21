@@ -104,7 +104,7 @@
             // Thong bao ra cho nguoi dung
             echo "Khong thanh cong";
         } else {
-            header("Location: ../threads/thread.php?id=$new_thread_id");
+            header("Location: ./thread.php?id=$new_thread_id");
         }
     }
 

@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["username"] = $user["username"];
         $_SESSION["user_id"] = $user["user_id"];
         $_SESSION["pfp"] = $user["profile_pic"];
-        header("Location: ../trangchu/home.php");  // Điều hướng về home.php trong thư mục trang chủ
+        header("Location: ./index.php");  // Điều hướng về home.php trong thư mục trang chủ
         exit();
     } else {
         $error = "Sai tài khoản hoặc mật khẩu!";

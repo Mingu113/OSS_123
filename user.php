@@ -21,7 +21,7 @@ if ($isLoggedIn) {
         $role = $user_data["role"];
     }
 } else {
-    header("Location: ../trangchu/home.php");
+    header("Location: ./index.php");
 }
 
 global $user_id;
