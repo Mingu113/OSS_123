@@ -100,7 +100,9 @@
     {
         $thread = $_POST["thread"];
         $query_delete_thread = "DELETE FROM `Threads` WHERE thread_id = $thread";
+        $query_delete_post = "DELETE FROM `posts` WHERE thread_id = $thread";
         mysqli_query($conn, $query_delete_thread);
+        mysqli_query($conn, $query_delete_post);
     }
 
     if(isset($_POST["post"]))
