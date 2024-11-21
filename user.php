@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <?php
-require "../trangchu/config.php";
+require "./config.php";
 session_start(); // start session
 $isLoggedIn = isset($_SESSION["user_id"]);
 if ($isLoggedIn) {
@@ -126,8 +126,8 @@ function changepfp($file, $user_id) {
         $fileSize = $file['size'];
         $fileType = $file['type'];
 
-        // $uploadFileDir = '../images/userpfp/';
-        $uploadFileDir = '../images/userpfp/';
+        // $uploadFileDir = './images/userpfp/';
+        $uploadFileDir = './images/userpfp/';
         $dest_path = $uploadFileDir . basename($fileName);
 
         $allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -223,14 +223,14 @@ function changepfp($file, $user_id) {
 
 <body>
     <?php session_commit();
-    require "../trangchu/header.php" ?>
+    require "./header.php" ?>
     <div class="container-fluid mt-5">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
                     <div class="header-section d-flex justify-content-between align-items-center mb-4">
-                        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a
-                                href="../nguoidung/user.php">My Profile</a>
+                        <span><a href="./index.php">Home <i class="bi bi-caret-left"></i> </a><a
+                                href="./user.php">My Profile</a>
                             <h3>Accout Details</h3>
                     </div>
 
@@ -260,7 +260,7 @@ function changepfp($file, $user_id) {
                             <?php endif; ?>
                             <?php if ($role != "user"): ?>
                                 <td>
-                                    <a href="../admin/user.php"><button class="btn-success" type="button">Đi đến trang quản trị: <?php echo $role;?></button></a>
+                                    <a href="./admin.php"><button class="btn-success" type="button">Đi đến trang quản trị: <?php echo $role;?></button></a>
                                 </td>
                             <?php endif; ?>
                         </tr>
@@ -324,7 +324,7 @@ function changepfp($file, $user_id) {
                         while ($row = mysqli_fetch_array($result)) {
                             echo "<ul class='list-group'>";
                             echo "<li class='post_li mt-3'>";
-                            echo "<a href='../threads/thread.php?id=" . $row["thread_id"] . "&post=" . $row["post_id"] . "'>" . "Post: " . nl2br(stripcslashes($row["content"])) . "</br>" . " Created At: " . $row["created_at"] . "</a>";
+                            echo "<a href='./thread.php?id=" . $row["thread_id"] . "&post=" . $row["post_id"] . "'>" . "Post: " . nl2br(stripcslashes($row["content"])) . "</br>" . " Created At: " . $row["created_at"] . "</a>";
                             echo "</li>";
                             echo "</ul>";
                         }

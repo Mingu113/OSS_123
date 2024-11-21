@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <?php
-require "../trangchu/config.php";
+require "./config.php";
 $query_check = $conn->prepare("SELECT * FROM Users WHERE Users.role = 'admin';");
 $query_check->execute();
 $result = $query_check->get_result();
@@ -80,14 +80,14 @@ $result = $query->get_result();
 </head>
 
 <body>
-    <?php require "../trangchu/header.php" ?>
+    <?php require "./header.php" ?>
     <div class="container mt-5 flex-grow-1">
-        <a href="./thread_post.php"><button class="btn-success" >Chuyển sang danh sách bài viết</button></a>
+        <a href="./admin_thread.php"><button class="btn-success" >Chuyển sang danh sách bài viết</button></a>
         <h3>Danh Sách Người Dùng</h3>
         <?php while ($row = $result->fetch_assoc()): ?>
             <form action="" method="get">
             <div class="user-item">
-                <img src="../images/default.jpg" class="user-avatar" alt="User Avatar">
+                <img src="./images/default.jpg" class="user-avatar" alt="User Avatar">
                 <div class="user-info">
                 <?php if($row["is_banned"]) echo '<small style="color: red;">Người dùng đã bị ban</small>'; else echo ""; ?>
                     <h5><?php echo $row["username"]; ?></h5>

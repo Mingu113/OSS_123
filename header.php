@@ -24,16 +24,16 @@ if ($isLoggedIn) {
 } else {
     $username = "";
 }
-$profileImage = (!empty($_SESSION["pfp"]) && realpath($_SESSION["pfp"])) ? $_SESSION["pfp"] : "../images/default.jpg";
+$profileImage = (!empty($_SESSION["pfp"]) && realpath($_SESSION["pfp"])) ? $_SESSION["pfp"] : "./images/default.jpg";
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
-    <a class="navbar-brand" href="../trangchu/home.php">NTUCHAN</a>
+    <a class="navbar-brand" href="./index.php">NTUCHAN</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-        <?php require "../timkiem/tool.php" ?>
+        <?php require "./tool.php" ?>
         <div>
             <?php if (!empty($username)): ?>
                 <!-- Dropdown -->
@@ -44,16 +44,16 @@ $profileImage = (!empty($_SESSION["pfp"]) && realpath($_SESSION["pfp"])) ? $_SES
                         <span class="font-weight-bold text-white ml-2"><?php echo htmlspecialchars($username); ?></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="../nguoidung/user.php">
+                        <a class="dropdown-item" href="./user.php">
                             <i class="fas fa-user-circle"></i> Trang cá nhân
                         </a>
-                        <a class="dropdown-item" href="../dangnhap/login.php">
+                        <a class="dropdown-item" href="./login.php">
                             <i class="fas fa-sign-out-alt"></i> Đăng Xuất
                         </a>
                     </div>
                 </div>
             <?php else: ?>
-                <a href="../dangnhap/login.php">
+                <a href="./login.php">
                     <button class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</button>
                 </a>
             <?php endif; ?>

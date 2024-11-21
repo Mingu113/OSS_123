@@ -94,7 +94,7 @@
     </style>
 </head>
 <?php 
-    require "../trangchu/config.php";
+    require "./config.php";
     
     if(isset($_POST["thread"]))
     {
@@ -124,7 +124,7 @@
 ?>
 
 <body>
-    <?php session_abort(); require "../trangchu/header.php";?>
+    <?php session_abort(); require "./header.php";?>
 
     <div class="container mt-5 flex-grow-1">
     <a href="./user.php"><button class="btn-success" >Chuyển sang danh sách người dùng</button></a>

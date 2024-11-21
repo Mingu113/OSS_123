@@ -26,7 +26,7 @@
 
 <body>
     <?php
-    require "config.php";
+    require "./config.php";
     session_start(); // start session
     $isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
     if ($isLoggedIn) {
@@ -35,7 +35,7 @@
     } else {
         $username = "";
     }
-    $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
+    $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "./images/default.jpg";
     ?>
 
     <?php
@@ -70,7 +70,7 @@
                     mysqli_data_seek($result1, 0);
                     while ($row1 = mysqli_fetch_array($result1)) {
                         if ($row["board_id"] == $row1["board_id"]) {
-                            echo "<a href='../category/list.php?name=" . urlencode($row1["name"]) . "&category_id=" . urlencode($row1["category_id"]) . "&sort=thread" . "' class=\"list-group-item list-group-item-action\">";
+                            echo "<a href='./category.php?name=" . urlencode($row1["name"]) . "&category_id=" . urlencode($row1["category_id"]) . "&sort=thread" . "' class=\"list-group-item list-group-item-action\">";
                             echo $row1["name"];
                             echo "</a>";
                         }
@@ -90,7 +90,7 @@
                         <?php
                         while ($row = mysqli_fetch_array($result3)) {
                             echo "<li>";
-                            echo '<a href="../threads/thread.php?id=' . urlencode($row["thread_id"]) . '">' . $row["title"] . "</a>";
+                            echo '<a href="./thread.php?id=' . urlencode($row["thread_id"]) . '">' . $row["title"] . "</a>";
                             echo "</li>";
                         }
                         ?>
