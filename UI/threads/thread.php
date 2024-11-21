@@ -61,7 +61,7 @@ if (isset($thread_id)) {
     $offset = ($page - 1) * $posts_per_page;
     // Truy vấn để lấy tất cả bài viết
     $query_posts = "SELECT DISTINCT 
-   p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
+   p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title, u.role, u.is_banned
    FROM Posts p
    JOIN Users u ON u.user_id = p.user_id
    JOIN Threads t ON t.thread_id = p.thread_id
