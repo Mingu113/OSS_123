@@ -141,7 +141,7 @@
 
     // Truy vấn threads theo giới hạn
     $search_th_ca =
-        "SELECT t.thread_id, t.title, t.category_id, t.created_at, t.newest_post_at, t.posts_count, t.is_pinned, u.profile_pic, u.username
+        "SELECT t.thread_id, t.title, t.category_id, t.created_at, t.newest_post_at, t.posts_count, t.is_pinned, u.profile_pic, u.username, u.role
     FROM Threads t
     LEFT JOIN 
     Posts p ON t.thread_id = p.thread_id
@@ -241,6 +241,9 @@
                                     <a href="../threads/thread.php?id=<?php  echo urlencode($value["thread_id"]); ?>"
                                         class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['title']); ?></a>
                                     <div><span> <?php echo $value["username"] ?></span> |
+                                    <?php if($value["role"] == "admin"):?>
+                                        <span style="color: green;"><?php echo $value["role"];?></span> |
+                                        <?php endif;?>
                                         <span><?php echo htmlspecialchars($value['created_at']); ?></span>
                                     </div>
                                 </div>

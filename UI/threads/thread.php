@@ -42,7 +42,7 @@ if (isset($_POST['btn_post'])) {
 if (isset($thread_id)) {
     // Truy vấn để lấy tất cả bài viết
     $query_posts = "
-        SELECT DISTINCT p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title
+        SELECT DISTINCT p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title, u.role, u.is_banned
         FROM Posts p
         JOIN Users u ON u.user_id = p.user_id
         JOIN Threads t ON t.thread_id = p.thread_id
@@ -174,6 +174,11 @@ $conn->close();
             padding: 10px;
             font-size: 16px;
         }
+        .user-role {
+            border: solid 1px;
+            padding: 2px;
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -195,10 +200,18 @@ $conn->close();
                                 <img src="<?php echo ($post['profile_pic'] && realpath($post['profile_pic'])) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
                                     alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%;">
                                 <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
+                                <?php if($post["role"] != "user"):?>
+                                <p class="user-role"><small><span style="color: green;"><?php echo $post["role"];?></small></span></p>
+                                <?php else: ?>
+                                <p class="user-role"><small><span style="color: black;"><?php echo $post["role"];?></small></span></p>
+                                <?php endif;?>
                             </div>
                             <div class="post-content">
                                 <p><?php echo nl2br(stripcslashes($post['content'])); ?></p>
                                 <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
+                                <?php if($post["is_banned"] == 1):?>
+                                    <p><span style="color: red;"><small>Người dùng này đã bị ban</small></span></p>
+                                <?php endif;?>
                             </div>
                         </div>
 
