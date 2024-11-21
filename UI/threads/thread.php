@@ -21,9 +21,11 @@ if (isset($_POST['btn_post'])) {
         $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
         $post_content = htmlspecialchars($post_content);
         $user_id = $_SESSION["user_id"];
-        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())";
+        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW()) ;";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("iis", $thread_id, $user_id, $post_content);
+        $update_thread_query = $conn->prepare("UPDATE `Threads` SET `newest_post_at` = NOW() WHERE `Threads`.`thread_id` = ?");
+        $update_thread_query->bind_param("i", $thread_id);
         // Move the old place
         echo '<script>
         window.onload = function() {
@@ -32,7 +34,7 @@ if (isset($_POST['btn_post'])) {
         };
         </script>';
 
-        if ($stmt->execute());
+        if ($stmt->execute()) $update_thread_query->execute();
     } else {
         echo "Vui lòng điền đầy đủ thông tin.";
     }
@@ -72,7 +74,7 @@ if (isset($thread_id)) {
     }
 } else
     $thread_title = "Không có Thread";
-
+$conn->close();
 ?>
 
 <head>
