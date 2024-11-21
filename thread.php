@@ -3,7 +3,7 @@
 
 <?php
 session_start();
-require "../trangchu/config.php";
+require "./config.php";
 if (isset($_GET["id"]))
     $thread_id = $_GET["id"];
 if (isset($_GET["post"])) {
@@ -19,7 +19,7 @@ if ($result = $query_check->fetch_assoc()) {
 // Function to upload image to posts
 function uploadImages($image_files): ?string
 {
-    $uploadDirectory = '../images/user_posts_img/';
+    $uploadDirectory = './images/user_posts_img/';
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     $maxFileSize = 2 * 1024 * 1024; // 2MB
     $totalFiles = count($image_files['name']);
@@ -252,7 +252,7 @@ $conn->close();
 
 <body>
     <?php session_abort();
-    require("../trangchu/header.php"); ?>
+    require("./header.php"); ?>
     <div class="container mt-5">
         <div class="row">
             <div class="col-lg-8">
@@ -265,7 +265,7 @@ $conn->close();
                         <div class="post" id="<?php echo $post["post_id"] ?>">
                             <div class="post-number">#<?php echo $post_index++; ?></div>
                             <div style="margin: 10px; margin-right: 25px">
-                                <img src="<?php echo ($post['profile_pic'] && realpath($post['profile_pic'])) == null ? "../images/default.jpg" : $post["profile_pic"]; ?>"
+                                <img src="<?php echo ($post['profile_pic'] && realpath($post['profile_pic'])) == null ? "./images/default.jpg" : $post["profile_pic"]; ?>"
                                     alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%;">
                                 <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
                                 <?php if ($post["role"] != "user"): ?>
@@ -349,7 +349,7 @@ $conn->close();
                 <?php endif; ?>
                 <?php if (!$thread_is_available): ?>
                     <div style="text-align: center;">
-                        <img align="center" src="../images/not_found.gif" alt="Image" width="60%">
+                        <img align="center" src="./images/not_found.gif" alt="Image" width="60%">
                         <h1 align="center">Không có bài thread này, có thể đã bị xóa hoặc không tồn tại</h1>
                     </div>
                 <?php endif; ?>

@@ -89,7 +89,7 @@
 
 <body>
     <?php
-    require "../trangchu/config.php";
+    require "./config.php";
     session_start(); // start session
     $isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
     if ($isLoggedIn) {
@@ -98,7 +98,7 @@
     } else {
         $username = "";
     }
-    $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
+    $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "./images/default.jpg";
     ?>
     <?php
     // Lấy dữ liệu từ form hoặc URL
@@ -195,12 +195,12 @@
     }
     ?>
     <?php session_abort();
-    require "../trangchu/header.php" ?>
+    require "./header.php" ?>
     <div class="container mt-5">
 
-        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Thread name?</a>
+        <span><h3>Từ Khóa tìm kiếm : <?php echo $key; ?></h3>
         </span>
-        <h3 class=""><?php echo $key; ?></h3>
+
         <div class="d-flex">
             <!-- Liên kết phân trang -->
             <nav aria-label="Page navigation">
@@ -236,10 +236,10 @@
             <ul class="list-group">
                 <?php foreach ($search_results as $value): ?>
                     <li class="list-group-item d-flex">
-                        <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
+                        <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "./images/default.jpg"; ?>"
                             class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
                         <div class="content-wrapper ">
-                            <a href="../threads/thread.php?id=<?php echo urlencode($value['thread_id']); ?>&post=<?php echo urldecode($value['post_id']) ?>"
+                            <a href="./thread.php?id=<?php echo urlencode($value['thread_id']); ?>&post=<?php echo urldecode($value['post_id']) ?>"
                                 class="topic-name font-weight-bold"><?php echo highlight(htmlspecialchars($value['Title']), $key); ?></a>
                             <span><?php echo htmlspecialchars($value['post_content']); ?></span>
                             <div><span><?php echo $value['username'] ?></span> |

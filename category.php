@@ -169,14 +169,13 @@
 
     ?>
     <?php session_abort();
-    require "../trangchu/header.php" ?>
+    require "./header.php" ?>
     <div class="container mt-5">
 
-        <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a
-                href="#"><?php echo $name; ?></a>
+        <span><a href="./index.php">Home <i class="bi bi-caret-left"></i> </a>
+            <h3 class=""><?php echo $name; ?></h3>
         </span>
-        <!-- Thay bằng tên của Post -->
-        <h3 class=""><?php echo $name; ?></h3>
+       
         <div class="d-flex">
             <!-- Liên kết phân trang -->
             <nav aria-label="Page navigation">
@@ -184,7 +183,7 @@
                     <?php if ($page > 1): ?>
                         <li class="page-item">
                             <a class="page-link"
-                                href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
+                                href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
                                 trước</a>
                         </li>
                     <?php endif; ?>
@@ -193,14 +192,14 @@
                         <li class="page-item <?php if ($i == $page)
                             echo 'active'; ?>">
                             <a class="page-link"
-                                href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                         </li>
                     <?php endfor; ?>
 
                     <?php if ($page < $total_pages): ?>
                         <li class="page-item">
                             <a class="page-link"
-                                href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
+                                href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
                                 sau</a>
                         </li>
                     <?php endif; ?>
@@ -235,10 +234,10 @@
                         </li>
                         <?php foreach ($threads_ca as $value): ?>
                             <li class="list-group-item d-flex">
-                                <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
+                                <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "./images/default.jpg"; ?>"
                                     class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
                                 <div class="content-wrapper ">
-                                    <a href="../threads/thread.php?id=<?php  echo urlencode($value["thread_id"]); ?>"
+                                    <a href="./thread.php?id=<?php  echo urlencode($value["thread_id"]); ?>"
                                         class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['title']); ?></a>
                                     <div><span> <?php echo $value["username"] ?></span> |
                                     <?php if($value["role"] == "admin"):?>
@@ -256,7 +255,7 @@
                             <?php if ($page > 1): ?>
                                 <li class="page-item">
                                     <a class="page-link"
-                                        href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
+                                        href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
                                         trước</a>
                                 </li>
                             <?php endif; ?>
@@ -265,14 +264,14 @@
                                 <li class="page-item <?php if ($i == $page)
                                     echo 'active'; ?>">
                                     <a class="page-link"
-                                        href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                        href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php endfor; ?>
 
                             <?php if ($page < $total_pages): ?>
                                 <li class="page-item">
                                     <a class="page-link"
-                                        href="./list.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
+                                        href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
                                         sau</a>
                                 </li>
                             <?php endif; ?>
@@ -280,7 +279,7 @@
                     </nav>
                 <?php else: ?>
                     <div style="text-align: center;">
-                        <img src="../images/not_found.gif" alt="Image" width="60%">
+                        <img src="./images/not_found.gif" alt="Image" width="60%">
                         <h1>Không có bài thread này, có thể đã bị xóa hoặc không tồn tại</h1>
                     </div>
                 <?php endif; ?>
