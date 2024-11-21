@@ -36,6 +36,8 @@
             color: inherit;
             transition: background-color 0.2s;
             position: relative;
+            height: 120px; /* Chiều cao cố định */
+            overflow: hidden; /* Ẩn nội dung tràn */
         }
 
         .thread-item:hover,
@@ -79,6 +81,11 @@
             position: absolute;
             right: 15px;
             top: 15px;
+            z-index: 1; /* Đảm bảo nút nằm trên cùng */
+        }
+
+        .thread-item .flex-grow-1 {
+            padding-right: 50px; /* Để tạo khoảng trống cho nút */
         }
 
         a {
@@ -86,6 +93,35 @@
         }
     </style>
 </head>
+<?php 
+    require "../trangchu/config.php";
+    
+    if(isset($_POST["thread"]))
+    {
+        $thread = $_POST["thread"];
+        $query_delete_thread = "DELETE FROM `Threads` WHERE thread_id = $thread";
+        $query_delete_post = "DELETE FROM `posts` WHERE thread_id = $thread";
+        mysqli_query($conn, $query_delete_thread);
+        mysqli_query($conn, $query_delete_post);
+    }
+
+    if(isset($_POST["post"]))
+    {
+        $post = $_POST["post"];
+        $query_delete_post = "DELETE FROM `Posts` WHERE post_id = $post";
+        mysqli_query($conn, $query_delete_post);
+    }
+
+
+    $query1 = "SELECT * FROM `Threads`";
+    $result1 = mysqli_query($conn, $query1);
+
+    $query2 = "SELECT Posts.*, Users.profile_pic, Users.username, Threads.title
+        FROM Posts
+        JOIN Users ON Posts.user_id = Users.user_id 
+        JOIN Threads ON Posts.thread_id = Threads.thread_id";
+    $result2 = mysqli_query($conn, $query2);
+?>
 
 <body>
     <?php session_abort(); require "../trangchu/header.php";?>
@@ -94,32 +130,44 @@
         <div class="flex-container">
             <div>
                 <h3>Threads</h3>
-                <div class="thread-item d-flex justify-content-between">
-                    <div>
-                        <h5>Thread Title 1</h5>
-                        <div class="timestamp">2024-11-15</div>
-                    </div>
-                    <button class="btn btn-success action-button">Duyệt</button>
-                </div>
-                <div class="thread-item d-flex justify-content-between">
-                    <div>
-                        <h5>Thread Title 2</h5>
-                        <div class="timestamp">2024-11-14</div>
-                    </div>
-                    <button class="btn btn-success action-button">Duyệt</button>
-                </div>
-                <div class="thread-item d-flex justify-content-between">
-                    <div>
-                        <h5>Thread Title 3</h5>
-                        <div class="timestamp">2024-11-13</div>
-                    </div>
-                    <button class="btn btn-success action-button">Duyệt</button>
-                </div>
+                <?php
+                while ($row1 = mysqli_fetch_array($result1)) {
+                    echo '<form method="POST" action="">'; // Hành động đến trang hiện tại
+                    echo '<div class="thread-item d-flex justify-content-between align-items-start">';
+                    echo '<div class="flex-grow-1">';
+                    echo '<h5>' . $row1["title"] . '</h5>'; 
+                    echo '<div class="timestamp">' . $row1["created_at"] . '</div>';
+                    echo '</div>';
+                    echo '<button type="submit" name="thread" value="' . $row1['thread_id'] . '" class="btn btn-danger action-button">Xóa</button>'; // Nút submit
+                    echo '</div>';
+                    echo '</form>';
+                }
+                ?>
             </div>
 
             <div>
                 <h3>Posts</h3>
-                <a href="#" class="post-item d-flex justify-content-between">
+                <?php
+                    while ($row2 = mysqli_fetch_array($result2)) {
+                        echo '<form method="POST" action="">'; // Hành động đến trang hiện tại
+                        echo '<div class="post-item d-flex justify-content-between">';
+                        echo '<div class="d-flex">';
+                        echo '<img src="../images/' . ($row2["profile_pic"] ?? "default.jpg") . '" class="post-avatar mr-3" alt="User Avatar">';
+                        echo '<div class="flex-grow-1">';
+                        echo '<h5><strong>' . $row2["title"] . '</strong></h5>'; // Không sử dụng htmlspecialchars()
+                        echo '<h6>' . $row2["username"] . '</h6>';
+                        echo '<small>' . $row2["created_at"] . '</small>';
+                        echo '<p>' . $row2["content"] . '</p>'; // Không sử dụng highlight
+                        echo '<div class="timestamp">' . $row2["created_at"] . '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '<button type="submit" name="post" value="' . $row2['post_id'] . '" class="btn btn-danger action-button">Xóa</button>'; // Nút submit
+                        echo '</div>';
+                        echo '</form>';
+                    }
+                ?>
+            </div>
+            <!-- <a href="#" class="post-item d-flex justify-content-between">
                     <div class="d-flex">
                         <img src="../images/default.jpg" class="post-avatar mr-3" alt="User Avatar">
                         <div class="flex-grow-1">
@@ -130,32 +178,7 @@
                         </div>
                     </div>
                     <button class="btn btn-danger action-button">Xóa</button>
-                </a>
-                <a href="#" class="post-item d-flex justify-content-between">
-                    <div class="d-flex">
-                        <img src="../images/default.jpg" class="post-avatar mr-3" alt="User Avatar">
-                        <div class="flex-grow-1">
-                            <h5><strong>Thread Title 2</strong></h5>
-                            <h6>User789</h6>
-                            <p>Another sample post content related to thread 2. Curabitur vel libero nec leo dapibus bibendum.</p>
-                            <div class="timestamp">2024-11-14</div>
-                        </div>
-                    </div>
-                    <button class="btn btn-danger action-button">Xóa</button>
-                </a>
-                <a href="#" class="post-item d-flex justify-content-between">
-                    <div class="d-flex">
-                        <img src="../images/default.jpg" class="post-avatar mr-3" alt="User Avatar">
-                        <div class="flex-grow-1">
-                            <h5><strong>Thread Title 3</strong></h5>
-                            <h6>User101</h6>
-                            <p>Yet another post. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                            <div class="timestamp">2024-11-13</div>
-                        </div>
-                    </div>
-                    <button class="btn btn-danger action-button">Xóa</button>
-                </a>
-            </div>
+                </a>-->
         </div>
     </div>
 
