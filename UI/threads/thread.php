@@ -16,15 +16,43 @@ if ($result = $query_check->fetch_assoc()) {
     if ($result["is_banned"])
         $user_is_banned = true;
 }
+// Function to upload image to posts
+function uploadImages($image_files): ?string
+{
+    $uploadDirectory = '../images/user_posts_img/';
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    $maxFileSize = 2 * 1024 * 1024; // 2MB
+    $totalFiles = count($image_files['name']);
+    $post_images = [];
+    for ($i = 0; $i < $totalFiles; $i++) {
+        // Create unique name so the file won't have the same name (ko muon lam may cai lien quan den file nua)
+        $fileName = uniqid(mt_rand(), true) . basename($image_files['name'][$i]) ;
+        $fileType = $image_files['type'][$i];
+        $fileSize = $image_files['size'][$i];
+        $targetFilePath = $uploadDirectory . $fileName;
+        if (in_array($fileType, $allowedTypes) && $fileSize <= $maxFileSize) {
+            if (move_uploaded_file($image_files['tmp_name'][$i], $targetFilePath)) {
+                $post_images[] = $targetFilePath;
+            }
+        }
+    }
+    $images_list_string = implode(",", $post_images);
+    return $images_list_string;
+}
 // Gửi bài post mới
 if (isset($_POST['btn_post'])) {
     if (isset($_POST['postContent'])) {
         $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
         $post_content = htmlspecialchars($post_content);
         $user_id = $_SESSION["user_id"];
-        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW()) ;";
+        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at, post_images) VALUES (?, ?, ?, NOW(), ?) ;";
+        //
+        $file = $_FILES["file_upload"];
+        if($file['error'][0] == UPLOAD_ERR_OK) $post_images = uploadImages($_FILES["file_upload"]);
+        else $post_images = null ;
+        //
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("iis", $thread_id, $user_id, $post_content);
+        $stmt->bind_param("iiss", $thread_id, $user_id, $post_content, $post_images);
         $update_thread_query = $conn->prepare("UPDATE `Threads` SET `newest_post_at` = NOW() WHERE `Threads`.`thread_id` = ?");
         $update_thread_query->bind_param("i", $thread_id);
         // Move the old place
@@ -61,7 +89,7 @@ if (isset($thread_id)) {
     $offset = ($page - 1) * $posts_per_page;
     // Truy vấn để lấy tất cả bài viết
     $query_posts = "SELECT DISTINCT 
-   p.thread_id, u.username, p.post_id, p.content, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title, u.role, u.is_banned
+   p.thread_id, u.username, p.post_id, p.content, p.post_images, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title, u.role, u.is_banned
    FROM Posts p
    JOIN Users u ON u.user_id = p.user_id
    JOIN Threads t ON t.thread_id = p.thread_id
@@ -201,6 +229,24 @@ $conn->close();
             padding: 2px;
             display: inline-block;
         }
+
+        .image_list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .image_list img {
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -213,7 +259,7 @@ $conn->close();
                 <!-- Hiển thị tất cả bài viết-->
                 <?php if (isset($posts_result) && mysqli_num_rows($posts_result) > 0): ?>
                     <h3><?php echo $thread_title; ?></h3>
-                    <?php $post_index = 1;
+                    <?php $post_index = $offset + 1;
                     mysqli_data_seek($posts_result, 0); ?>
                     <?php while ($post = mysqli_fetch_assoc($posts_result)): ?>
                         <div class="post" id="<?php echo $post["post_id"] ?>">
@@ -236,6 +282,16 @@ $conn->close();
                                 <?php if ($post["is_banned"] == 1): ?>
                                     <p><span style="color: red;"><small>Người dùng này đã bị ban</small></span></p>
                                 <?php endif; ?>
+                                <?php if(!empty($post['post_images'])):?>
+                                    <?php
+                                        $post_images_list = explode(",", $post["post_images"]);
+                                    ?>
+                                    <div class="image_list">
+                                        <?php foreach($post_images_list as $image):?>
+                                        <a href="<?php echo $image;?>" target="_blank" rel="noopener noreferrer" ><img src="<?php echo $image; ?>" alt="<?php echo"Ảnh của" . $post["username"] ?>"></a>
+                                        <?php endforeach;?>
+                                    </div>
+                                <?php endif;?>
                             </div>
                         </div>
 
@@ -278,11 +334,13 @@ $conn->close();
                     <div class="new-post" id="new-post">
                         <h2>Người dùng: <?php echo $username; ?></h2>
                         <h3>Viết Bài Post Mới</h3>
-                        <form method="post" action="">
+                        <form method="post" action="" enctype="multipart/form-data">
                             <div class="form-group">
-                                <textarea class="form-control" id="postContent" name="postContent" rows="4"
+                                <textarea required class="form-control" id="postContent" name="postContent" rows="4"
                                     placeholder="Nhập nội dung bài post..."></textarea>
                             </div>
+                            <input type="file" name="file_upload[]" id="file_input" multiple accept="image/*">
+                            <div class="image_list" id="image_list"></div>
                             <button type="submit" class="btn btn-primary" name="btn_post">Đăng</button>
                         </form>
                     </div>
@@ -301,6 +359,35 @@ $conn->close();
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- upload images -->
+    <script>
+        const file_input = document.getElementById('file_input');
+        const image_list = document.getElementById('image_list');
+        // const upload_button = document.getElementsByName('btn_post');
+        let selectedFiles = [];
+
+        file_input.addEventListener('change', (event) => {
+            const files = event.target.files;
+            if (files.length > 5) {
+                alert("Bạn chỉ được phép đăng 5 hình ảnh cùng một lúc.");
+                document.getElementsByName("btn_post")[0].disabled = true;
+                return;
+            }
+            document.getElementsByName("btn_post")[0].disabled = false;
+            selectedFiles = Array.from(files);
+            image_list.innerHTML = '';
+
+            selectedFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    image_list.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
 </body>
 
 </html>
