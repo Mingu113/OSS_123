@@ -224,7 +224,7 @@
                     <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
                     class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
                         <div class="content-wrapper ">
-                            <a href="#"
+                            <a href="../threads/thread.php?id=<?php echo urlencode($value['thread_id']); ?>&post=<?php echo urldecode($value['post_id']) ?>"
                                 class="topic-name font-weight-bold"><?php echo highlight(htmlspecialchars($value['Title']),$key); ?></a>
                             <span><?php echo htmlspecialchars($value['post_content']); ?></span>
                             <div><span><?php echo $value['username'] ?></span> |

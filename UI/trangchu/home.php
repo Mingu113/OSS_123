@@ -89,7 +89,7 @@
                         <?php
                         while ($row = mysqli_fetch_array($result3)) {
                             echo "<li>";
-                            echo '<a href="../threads/thread.php?id='.$row["thread_id"].'">'.$row["title"]."</a>";
+                            echo '<a href="../threads/thread.php?id='.urlencode($row["thread_id"]).'">'.$row["title"]."</a>";
                             echo "</li>";
                         }
                         ?>
