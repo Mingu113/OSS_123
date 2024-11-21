@@ -75,8 +75,19 @@
 </head>
 
 <body>
+<?php
+    require "../trangchu/config.php";
+    session_start(); // start session
+    $isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
+    if ($isLoggedIn) {
+        $username = $_SESSION["username"];
+        $user_id = $_SESSION["user_id"];
+    } else {
+        $username = "";
+    }
+    $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "../images/default.jpg";
+    ?>
     <?php
-    require "../category/config.php";
     // Lấy dữ liệu từ form hoặc URL
     $key = $_POST['search'] ?? $_GET['search'] ?? null;
     // Chống tấn công SQL Injection
@@ -122,7 +133,9 @@
         (SELECT post_id FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS post_id,
         (SELECT user_id FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS user_id,
         (SELECT content FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS post_content,
-        (SELECT created_at FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS post_created_at
+        (SELECT created_at FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1) AS post_created_at,
+        (SELECT profile_pic FROM Users WHERE user_id = (SELECT user_id FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1)) AS profile_pic,
+        (SELECT username FROM Users WHERE user_id = (SELECT user_id FROM Posts WHERE thread_id = Threads.thread_id LIMIT 1)) AS username
     FROM Threads
     WHERE Threads.title LIKE '%$key%'
     AND Threads.thread_id NOT IN (
@@ -143,9 +156,12 @@
         Posts.post_id,
         Posts.user_id, 
         Posts.content AS post_content, 
-        Posts.created_at AS post_created_at
+        Posts.created_at AS post_created_at,
+        Users.profile_pic,
+        Users.username
     FROM Threads 
     JOIN Posts ON Threads.thread_id = Posts.thread_id 
+    JOIN Users ON Posts.user_id = Users.user_id
     WHERE Posts.content LIKE '%$key%'";
     // Gộp 2 bảng làm 1 và phân trang
     $search_query = "($threads_no_posts) UNION ALL ($all_posts)
@@ -160,29 +176,17 @@
 
     // Tính tổng số trang
     $total_pages = ceil($total_search / $search_per_page);
+    if (isset($_GET['logout'])) {
+        session_unset();
+    }
     ?>
+     <?php session_abort(); require "../trangchu/header.php" ?>
     <div class="container mt-5">
-        <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <form class="form-inline">
-                <div class="input-group">
-                    <input class="form-control" type="search" placeholder="Tìm kiếm..." aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-success" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <div>
-                <a href="#" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
-                <a href="#" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
-            </div>
-        </div>
 
         <span><a href="../trangchu/home.php">Home <i class="bi bi-caret-left"></i> </a><a href="#">Thread name?</a>
         </span>
         <h3 class=""><?php echo $key; ?></h3>
-        <div class="row">
+        <div class="d-flex">
             <!-- Liên kết phân trang -->
             <nav aria-label="Page navigation">
                 <ul class="pagination">
@@ -211,15 +215,19 @@
                     <?php endif; ?>
                 </ul>
             </nav>
+        </div>
+        <div class="row">
+            
             <ul class="list-group">
                 <?php foreach ($search_results as $value): ?>
                     <li class="list-group-item d-flex">
-                        <img src="..." alt="icon" class="my-1 mr-3">
+                    <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "../images/default.jpg"; ?>"
+                    class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
                         <div class="content-wrapper ">
-                            <a href="#"
+                            <a href="../threads/thread.php?id=<?php echo urlencode($value['thread_id']); ?>&post=<?php echo urldecode($value['post_id']) ?>"
                                 class="topic-name font-weight-bold"><?php echo highlight(htmlspecialchars($value['Title']),$key); ?></a>
                             <span><?php echo htmlspecialchars($value['post_content']); ?></span>
-                            <div><span>username</span> |
+                            <div><span><?php echo $value['username'] ?></span> |
                                 <span><?php echo highlight(htmlspecialchars($value['post_created_at']), $key); ?></span>
                             </div>
                         </div>
@@ -227,6 +235,9 @@
                 <?php endforeach ?>
             </ul>
             <h3></h3>
+        </div>
+        <div class="d-flex">
+            <!-- Liên kết phân trang -->
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <?php if ($page > 1): ?>
@@ -254,8 +265,6 @@
                     <?php endif; ?>
                 </ul>
             </nav>
-
-
         </div>
     </div>
 
