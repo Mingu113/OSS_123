@@ -127,6 +127,7 @@
     <?php session_abort(); require "../trangchu/header.php";?>
 
     <div class="container mt-5 flex-grow-1">
+    <a href="./user.php"><button class="btn-success" >Chuyển sang danh sách người dùng</button></a>
         <div class="flex-container">
             <div>
                 <h3>Threads</h3>

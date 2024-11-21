@@ -82,6 +82,7 @@ $result = $query->get_result();
 <body>
     <?php require "../trangchu/header.php" ?>
     <div class="container mt-5 flex-grow-1">
+        <a href="./thread_post.php"><button class="btn-success" >Chuyển sang danh sách bài viết</button></a>
         <h3>Danh Sách Người Dùng</h3>
         <?php while ($row = $result->fetch_assoc()): ?>
             <form action="" method="get">

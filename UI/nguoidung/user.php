@@ -18,6 +18,7 @@ if ($isLoggedIn) {
         $profileImage = $user_data["profile_pic"];
         $_SESSION["pfp"] = $profileImage;
         $user_is_banned = $user_data["is_banned"];
+        $role = $user_data["role"];
     }
 } else {
     header("Location: ../trangchu/home.php");
@@ -255,6 +256,11 @@ function changepfp($file, $user_id) {
                             <?php if ($user_is_banned): ?>
                                 <td>
                                     <p class="btn-danger">Người dùng đã bị ban</p>
+                                </td>
+                            <?php endif; ?>
+                            <?php if ($role != "user"): ?>
+                                <td>
+                                    <a href="../admin/user.php"><button class="btn-success" type="button">Đi đến trang quản trị: <?php echo $role;?></button></a>
                                 </td>
                             <?php endif; ?>
                         </tr>
