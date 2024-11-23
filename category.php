@@ -289,6 +289,13 @@
                     <h4><?php echo "Tổng Số Lượng Thread: " . $total_threads; ?></h4>
                     </ul>
                 </div>
+                <br><br><br>
+                <div class="sidebar">
+                    <h4><?php echo "Thông tin: "?></h4>
+                    <h5><?php echo $category["description"];?></h5>
+                    <small></small>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
