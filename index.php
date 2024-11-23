@@ -56,6 +56,8 @@
     if (isset($_GET['logout'])) {
         session_unset();
     }
+    $query4 = "SELECT * FROM Posts ORDER BY created_at DESC LIMIT 5";
+    $result4 = mysqli_query($conn, $query4);
     ?>
     <?php session_abort();
     require "./header.php" ?>
@@ -86,12 +88,27 @@
                 <div class="sidebar">
                     <h3>Tổng Số Người Sử Dụng</h3>
                     <?php echo "<p>" . $sltv . " Thành viên </p>" ?>
-                    <h3>Bài viết mới nhất</h3>
+                    <h3>Thread mới nhất</h3>
                     <ul class="list-unstyled">
                         <?php
                         while ($row = mysqli_fetch_array($result3)) {
                             echo "<li>";
                             echo '<a href="./thread.php?id=' . urlencode($row["thread_id"]) . '">' . $row["title"] . "</a>";
+                            echo "</li>";
+                        }
+                        ?>
+                    </ul>
+                </div>
+                <div class="sidebar">
+                    <h3>Bình luận mới nhất</h3>
+                    <ul class="list-unstyled">
+                        <?php
+                        while ($row = mysqli_fetch_array($result4)) {
+                            echo "<li>";
+                            if(strlen($row["content"]) > 30) {
+                                $post_content = substr($row["content"], 0, 30) . "...";
+                            } else $post_content = $row["content"];
+                            echo '<a href="./thread.php?id=' . urlencode($row["thread_id"]) . '&post='.urlencode($row["post_id"]).'">' .nl2br(stripcslashes($post_content)) . "</a>";
                             echo "</li>";
                         }
                         ?>
