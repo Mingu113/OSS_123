@@ -57,16 +57,22 @@ if (isset($_POST['btn_post'])) {
         $stmt->bind_param("iiss", $thread_id, $user_id, $post_content, $post_images);
         $update_thread_query = $conn->prepare("UPDATE `Threads` SET `newest_post_at` = NOW() WHERE `Threads`.`thread_id` = ?");
         $update_thread_query->bind_param("i", $thread_id);
-        // Move the old place
-        echo '<script>
-        window.onload = function() {
-            const targetElement = document.getElementById("new-post");
-            targetElement.scrollIntoView({ behavior: "smooth" });
-        };
-        </script>';
 
-        if ($stmt->execute())
+        if ($stmt->execute()){
             $update_thread_query->execute();
+            header("HTTP/1.1 303 See Other");
+            $current_uri = $_SERVER["REQUEST_URI"];
+            echo $current_uri;
+            header("Location: $current_uri");
+            // currently not working
+            // Move the old place
+            echo '<script>
+            window.onload = function() {
+                const targetElement = document.getElementById("new-post");
+                targetElement.scrollIntoView({ behavior: "smooth" });
+            };
+            </script>';
+        }
     } else {
         echo "Vui lòng điền đầy đủ thông tin.";
     }
