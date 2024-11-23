@@ -21,6 +21,10 @@ $isLoggedIn = isset($_SESSION["username"], $_SESSION["user_id"]);
 if ($isLoggedIn) {
     $username = $_SESSION["username"];
     $user_id = $_SESSION["user_id"];
+    $query = "SELECT * FROM Notifications WHERE user_id = $user_id";
+    $get_notif = $conn->prepare($query);
+    $get_notif->execute();
+    $notif = $get_notif->get_result();
 } else {
     $username = "";
 }
@@ -51,6 +55,20 @@ $profileImage = (!empty($_SESSION["pfp"]) && realpath($_SESSION["pfp"])) ? $_SES
                             <i class="fas fa-sign-out-alt"></i> Đăng Xuất
                         </a>
                     </div>
+                <!-- Notification -->
+                <div class="dropdown">
+                    <a href="#" id="dropdownMenuButton" class="d-flex align-items-center text-decoration-none dropdown-toggle"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <p>Notification</p>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <?php while($notification = mysqli_fetch_assoc($notif)): ?>
+                            <a href="<?php echo $notification['link']; ?>" class="dropdown-item">
+                                <?php echo $notification['content']; ?>
+                            </a>
+                        <?php endwhile; ?>
+                    </div>
+                </div>
                 </div>
             <?php else: ?>
                 <a href="./login.php">

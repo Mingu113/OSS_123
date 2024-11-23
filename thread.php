@@ -47,7 +47,7 @@ if (isset($_POST['btn_post'])) {
         $post_content = htmlspecialchars($post_content);
         $user_id = $_SESSION["user_id"];
         $query = "INSERT INTO Posts (thread_id, user_id, content, created_at, post_images, reply_to) VALUES (?, ?, ?, NOW(), ?, ?) ;";
-        $query_notify = "INSERT INTO Notifications (user_id, content, is_read, created_at) VALUES (?, ?, '0', NOW()) ;";
+        $query_notify = "INSERT INTO Notifications (user_id, content, is_read, link, created_at) VALUES (?, ?, '0', ?, NOW()) ;";
         
         //
         $file = $_FILES["file_upload"];
@@ -69,15 +69,12 @@ if (isset($_POST['btn_post'])) {
         $update_thread_query->bind_param("i", $thread_id);
 
         if ($stmt->execute()) {
-            $stmt->close();
             $update_thread_query->execute();
-            $update_thread_query->close();
             // self reply will not create notification
             if($reply_to != null && $_POST['replied_user_id'] != $user_id) {
                 $notify = $conn->prepare($query_notify);
-                $notify->bind_param("is",$_POST["replied_user_id"], $notify_reply);
+                $notify->bind_param("iss",$_POST["replied_user_id"], $notify_reply, $_POST['link']);
                 $notify->execute();
-                $notify->close();
             }
             header("HTTP/1.1 303 See Other");
             $current_uri = $_SERVER["REQUEST_URI"];
@@ -153,7 +150,6 @@ if (isset($thread_id)) {
     $total_pages = ceil($total_post / $posts_per_page);
 } else
     $thread_title = "Không có Thread";
-$conn->close();
 ?>
 
 <head>
@@ -394,6 +390,7 @@ $conn->close();
                         <form method="post" action="" enctype="multipart/form-data">
                             <input readonly type="hidden" name="reply_to" id="reply_to" value="">
                             <input type="hidden" name="replied_user_id" id="replied_user_id">
+                            <input type="hidden" name="link" value="<?php echo $_SERVER['REQUEST_URI']?>">
                             <div><b>
                                     <p id="reply_to_user"></p><button id="cancel_reply" style="display: none;"
                                         onclick="stopReply()">Hủy</button>
