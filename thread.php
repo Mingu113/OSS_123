@@ -9,14 +9,13 @@ if (isset($_GET["post"])) {
     $post_id = $_GET["post"];
 }
 $user_id = $_SESSION["user_id"];
-if(isset($user_id))
-{
-$query_check = mysqli_query($conn, "SELECT is_banned FROM Users WHERE user_id = $user_id;");
-$user_is_banned = false;
-if ($result = $query_check->fetch_assoc()) {
-    if ($result["is_banned"])
-        $user_is_banned = true;
-}
+if (isset($user_id)) {
+    $query_check = mysqli_query($conn, "SELECT is_banned FROM Users WHERE user_id = $user_id;");
+    $user_is_banned = false;
+    if ($result = $query_check->fetch_assoc()) {
+        if ($result["is_banned"])
+            $user_is_banned = true;
+    }
 }
 // Function to upload image to posts
 function uploadImages($image_files): ?string
@@ -28,7 +27,7 @@ function uploadImages($image_files): ?string
     $post_images = [];
     for ($i = 0; $i < $totalFiles; $i++) {
         // Create unique name so the file won't have the same name (ko muon lam may cai lien quan den file nua)
-        $fileName = uniqid(mt_rand(), true) . basename($image_files['name'][$i]) ;
+        $fileName = uniqid(mt_rand(), true) . basename($image_files['name'][$i]);
         $fileType = $image_files['type'][$i];
         $fileSize = $image_files['size'][$i];
         $targetFilePath = $uploadDirectory . $fileName;
@@ -47,18 +46,27 @@ if (isset($_POST['btn_post'])) {
         $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
         $post_content = htmlspecialchars($post_content);
         $user_id = $_SESSION["user_id"];
-        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at, post_images) VALUES (?, ?, ?, NOW(), ?) ;";
+        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at, post_images, reply_to) VALUES (?, ?, ?, NOW(), ?, ?) ;";
         //
         $file = $_FILES["file_upload"];
-        if($file['error'][0] == UPLOAD_ERR_OK) $post_images = uploadImages($_FILES["file_upload"]);
-        else $post_images = null ;
+        if ($file['error'][0] == UPLOAD_ERR_OK)
+            $post_images = uploadImages($_FILES["file_upload"]);
+        else
+            $post_images = null;
+        //
+
+        if (!empty($_POST['reply_to'])) {
+            $reply_to = $_POST['reply_to'];
+        } else
+            $reply_to = null;
+        echo $reply_to;
         //
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("iiss", $thread_id, $user_id, $post_content, $post_images);
+        $stmt->bind_param("iissi", $thread_id, $user_id, $post_content, $post_images, $reply_to);
         $update_thread_query = $conn->prepare("UPDATE `Threads` SET `newest_post_at` = NOW() WHERE `Threads`.`thread_id` = ?");
         $update_thread_query->bind_param("i", $thread_id);
 
-        if ($stmt->execute()){
+        if ($stmt->execute()) {
             $update_thread_query->execute();
             header("HTTP/1.1 303 See Other");
             $current_uri = $_SERVER["REQUEST_URI"];
@@ -97,10 +105,12 @@ if (isset($thread_id)) {
     $offset = ($page - 1) * $posts_per_page;
     // Truy vấn để lấy tất cả bài viết
     $query_posts = "SELECT DISTINCT 
-   p.thread_id, u.username, p.post_id, p.content, p.post_images, p.created_at, u.user_id, u.profile_pic, u.major, t.title as title, u.role, u.is_banned
+   p.thread_id, u.username, p.post_id, p.content, p.post_images, p.created_at, p.reply_to, u.user_id, u.profile_pic, u.major, t.title as title, u.role, u.is_banned, u2.username AS reply_to_user
    FROM Posts p
    JOIN Users u ON u.user_id = p.user_id
    JOIN Threads t ON t.thread_id = p.thread_id
+   LEFT JOIN Posts p2 ON p.reply_to = p2.post_id
+   LEFT JOIN Users u2 ON p2.user_id = u2.user_id
    WHERE p.thread_id = $thread_id
    ORDER BY p.created_at ASC
    LIMIT $offset, $posts_per_page;";
@@ -256,14 +266,17 @@ $conn->close();
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         .highlight {
             animation: 2s highlight normal;
             border: 2px solid orangered;
         }
+
         @keyframes highlight {
             50% {
                 border: 2px solid transparent;
             }
+
             100% {
                 border: 2px solid orangered;
             }
@@ -298,21 +311,33 @@ $conn->close();
                                 <?php endif; ?>
                             </div>
                             <div class="post-content">
+                                <!-- Reply to user  -->
+                                <?php if ($post["reply_to"] != null): ?>
+                                    <a href=" " id="reply_to_<?php echo $post['reply_to']; ?>"
+                                        onclick="goToReply(<?php echo $post['reply_to']; ?>)">Đang trả lời: 
+                                        <?php echo $post['reply_to_user']; ?></a>
+                                <?php endif; ?>
+                                <!--  -->
                                 <p><?php echo nl2br(stripcslashes($post['content'])); ?></p>
                                 <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
+                                <div>
+                                    <button type="button"
+                                        onclick="setReplyTo(<?php echo $post['post_id']; ?>, '<?php echo $post['username']; ?>')">Reply</button>
+                                </div>
                                 <?php if ($post["is_banned"] == 1): ?>
                                     <p><span style="color: red;"><small>Người dùng này đã bị ban</small></span></p>
                                 <?php endif; ?>
-                                <?php if(!empty($post['post_images'])):?>
+                                <?php if (!empty($post['post_images'])): ?>
                                     <?php
-                                        $post_images_list = explode(",", $post["post_images"]);
+                                    $post_images_list = explode(",", $post["post_images"]);
                                     ?>
                                     <div class="image_list">
-                                        <?php foreach($post_images_list as $image):?>
-                                        <a href="<?php echo $image;?>" target="_blank" rel="noopener noreferrer" ><img src="<?php echo $image; ?>" alt="<?php echo"Ảnh của" . $post["username"] ?>"></a>
-                                        <?php endforeach;?>
+                                        <?php foreach ($post_images_list as $image): ?>
+                                            <a href="<?php echo $image; ?>" target="_blank" rel="noopener noreferrer"><img
+                                                    src="<?php echo $image; ?>" alt="<?php echo "Ảnh của" . $post["username"] ?>"></a>
+                                        <?php endforeach; ?>
                                     </div>
-                                <?php endif;?>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -356,6 +381,11 @@ $conn->close();
                         <h2>Người dùng: <?php echo $username; ?></h2>
                         <h3>Viết Bài Post Mới</h3>
                         <form method="post" action="" enctype="multipart/form-data">
+                            <input readonly type="hidden" name="reply_to" id="reply_to" value="">
+                            <div><b>
+                                    <p id="reply_to_user"></p><button id="cancel_reply" style="display: none;"
+                                        onclick="stopReply()">Hủy</button>
+                                </b></div>
                             <div class="form-group">
                                 <textarea required class="form-control" id="postContent" name="postContent" rows="4"
                                     placeholder="Nhập nội dung bài post..."></textarea>
@@ -408,6 +438,31 @@ $conn->close();
                 reader.readAsDataURL(file);
             });
         });
+    </script>
+    <script>
+        function setReplyTo(post_id, username) {
+            document.getElementById("cancel_reply").style.display = "block";
+            document.getElementById("reply_to").value = post_id;
+            document.getElementById("reply_to_user").innerText = "Đang trả lời " + username;
+        }
+        function stopReply() {
+            document.getElementById("reply_to").value = null;
+            document.getElementById("reply_to_user").innerText = "";
+            document.getElementById("cancel_reply").style.display = "none";
+        }
+        function goToReply(post_id) {
+            var reply_post = document.getElementById(post_id);
+            var link = "./thread.php?id=<?php echo $thread_id; ?>";
+            var id = "reply_to_" + post_id;
+            if (reply_post == null) {
+                // post reply is in another page
+                link = link + "&post=" + post_id;
+                document.getElementById(id).setAttribute('href', link);
+            } else {
+                document.getElementById(id).setAttribute('href', '#' + post_id);
+                reply_post.scrollIntoView({ behavior: "smooth" });
+            }
+        }
     </script>
 </body>
 
