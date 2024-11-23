@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <?php
 session_start();
 require "./config.php";
@@ -118,7 +117,8 @@ if (isset($thread_id)) {
         echo '<script>
         window.onload = function() {
             const targetElement = document.getElementById("' . $post_id . '");
-            targetElement.scrollIntoView({ behavior: "smooth" });
+            targetElement.classList.add("highlight");
+            targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
         };
         </script>';
     }
@@ -249,6 +249,18 @@ $conn->close();
             max-height: 200px;
             border: 1px solid #ccc;
             border-radius: 5px;
+        }
+        .highlight {
+            animation: 2s highlight normal;
+            border: 2px solid orangered;
+        }
+        @keyframes highlight {
+            50% {
+                border: 2px solid transparent;
+            }
+            100% {
+                border: 2px solid orangered;
+            }
         }
     </style>
 </head>
