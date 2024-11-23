@@ -47,6 +47,8 @@ if (isset($_POST['btn_post'])) {
         $post_content = htmlspecialchars($post_content);
         $user_id = $_SESSION["user_id"];
         $query = "INSERT INTO Posts (thread_id, user_id, content, created_at, post_images, reply_to) VALUES (?, ?, ?, NOW(), ?, ?) ;";
+        $query_notify = "INSERT INTO Notifications (user_id, content, is_read, created_at) VALUES (?, ?, '0', NOW()) ;";
+        
         //
         $file = $_FILES["file_upload"];
         if ($file['error'][0] == UPLOAD_ERR_OK)
@@ -57,9 +59,9 @@ if (isset($_POST['btn_post'])) {
 
         if (!empty($_POST['reply_to'])) {
             $reply_to = $_POST['reply_to'];
+            $notify_reply = "Có người đã trả lời bình luận của bạn";
         } else
             $reply_to = null;
-        echo $reply_to;
         //
         $stmt = $conn->prepare($query);
         $stmt->bind_param("iissi", $thread_id, $user_id, $post_content, $post_images, $reply_to);
@@ -67,7 +69,16 @@ if (isset($_POST['btn_post'])) {
         $update_thread_query->bind_param("i", $thread_id);
 
         if ($stmt->execute()) {
+            $stmt->close();
             $update_thread_query->execute();
+            $update_thread_query->close();
+            // self reply will not create notification
+            if($reply_to != null && $_POST['replied_user_id'] != $user_id) {
+                $notify = $conn->prepare($query_notify);
+                $notify->bind_param("is",$_POST["replied_user_id"], $notify_reply);
+                $notify->execute();
+                $notify->close();
+            }
             header("HTTP/1.1 303 See Other");
             $current_uri = $_SERVER["REQUEST_URI"];
             echo $current_uri;
@@ -322,7 +333,7 @@ $conn->close();
                                 <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
                                 <div>
                                     <button type="button"
-                                        onclick="setReplyTo(<?php echo $post['post_id']; ?>, '<?php echo $post['username']; ?>')">Reply</button>
+                                        onclick="setReplyTo(<?php echo $post['post_id']; ?>, '<?php echo $post['username']; ?>', <?php echo $post['user_id']; ?>)">Reply</button>
                                 </div>
                                 <?php if ($post["is_banned"] == 1): ?>
                                     <p><span style="color: red;"><small>Người dùng này đã bị ban</small></span></p>
@@ -382,6 +393,7 @@ $conn->close();
                         <h3>Viết Bài Post Mới</h3>
                         <form method="post" action="" enctype="multipart/form-data">
                             <input readonly type="hidden" name="reply_to" id="reply_to" value="">
+                            <input type="hidden" name="replied_user_id" id="replied_user_id">
                             <div><b>
                                     <p id="reply_to_user"></p><button id="cancel_reply" style="display: none;"
                                         onclick="stopReply()">Hủy</button>
@@ -440,9 +452,10 @@ $conn->close();
         });
     </script>
     <script>
-        function setReplyTo(post_id, username) {
+        function setReplyTo(post_id, username, replied_user_id) {
             document.getElementById("cancel_reply").style.display = "block";
             document.getElementById("reply_to").value = post_id;
+            document.getElementById("replied_user_id").value = replied_user_id;
             document.getElementById("reply_to_user").innerText = "Đang trả lời " + username;
         }
         function stopReply() {
