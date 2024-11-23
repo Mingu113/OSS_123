@@ -4,12 +4,6 @@ session_unset();
 // Kết nối tới cơ sở dữ liệu
 require "./config.php";
 
-
-// Kiểm tra kết nối
-if ($conn->connect_error) { 
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
 $error = "";  // Biến lưu thông báo lỗi
 
 // Kiểm tra nếu form đã được gửi
@@ -35,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["username"] = $user["username"];
         $_SESSION["user_id"] = $user["user_id"];
         $_SESSION["pfp"] = $user["profile_pic"];
-        header("Location: ./index.php");  // Điều hướng về home.php trong thư mục trang chủ
+        header("Location: ./index.php");  // Điều hướng về index.php trong thư mục trang chủ
         exit();
     } else {
         $error = "Sai tài khoản hoặc mật khẩu!";
@@ -67,7 +61,7 @@ $conn->close();
                     </div>
                     <div class="divider d-flex align-items-center my-4">
                         <p class="text-center fw-bold mx-3 mb-0">
-                            <a href="../trangchu/home.php"><img class="logo" src="images/Logo_NTU.png" alt=""></a>
+                            <a href="../trangchu/index.php"><img class="logo" src="images/Logo_NTU.png" alt=""></a>
                         </p>
                     </div>
 
