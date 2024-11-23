@@ -67,7 +67,6 @@
         </div>';
         exit();
     }
-    $profileImage = !empty($_SESSION["pfp"]) ? $_SESSION["pfp"] : "./images/default.jpg";
     ?>
     <div class="container mt-5">
         <div class="row">

@@ -1,10 +1,9 @@
 <?php
-require "./config.php";
 
 
 if (isset($_POST["add_board"])) {
     $board_name = $_POST["board_name"];
-    $query = "INSERT INTO `boards` (`board_id`, `board_name`) VALUES (NULL, '$board_name')";
+    $query = "INSERT INTO `Boards` (`board_id`, `board_name`) VALUES (NULL, '$board_name')";
     $result = mysqli_query($conn, $query);
     if (!$result) {
         die("Error: ");
@@ -27,7 +26,7 @@ if (isset($_POST["add_category"])) {
     $category_name = mysqli_real_escape_string($conn, $_POST["category_name"]);
     $des = mysqli_real_escape_string($conn, $_POST["des"]);
 
-    $query = "INSERT INTO `categories` (`category_id`, `board_id`, `name`, `description`) VALUES (NULL, '$board_id', '$category_name', '$des')";
+    $query = "INSERT INTO `Categories` (`category_id`, `board_id`, `name`, `description`) VALUES (NULL, '$board_id', '$category_name', '$des')";
     $result = mysqli_query($conn, $query);
     if (!$result) {
         die("Error: ");
@@ -93,7 +92,7 @@ if (isset($_POST["add_category"])) {
                         <label for="title">Board Name</label>
                         <select name="board_select" class="form-control">
                             <?php
-                            $query = "SELECT * FROM boards ORDER BY board_name";
+                            $query = "SELECT * FROM Boards ORDER BY board_name";
                             $result = mysqli_query($conn, $query);
                             if (!$result) {
                                 die("Query failed: " . mysqli_error($conn));

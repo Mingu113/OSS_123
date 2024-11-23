@@ -238,15 +238,21 @@ function changepfp($file, $user_id) {
                         <tr>
                             <td colspan="3">
                                 <div class="profile-container">
-                                    <form class="d-flex flex-column" method="post" enctype="multipart/form-data">
-                                        <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="200"
-                                            height="200">
-                                        <input type="file" name="img_files">
-                                        <input type="submit" class="btn btn-danger mt-1 mb-3" value="Change"
-                                            name="doi_anh"></i>
-                                    </form>
+                                    <img src="<?php echo $profileImage; ?>" class="rounded-circle" width="200"
+                                    height="200">
                                 </div>
                             </td>
+                        </tr>
+                        <tr>
+                            <form class="d-flex flex-column" method="post" enctype="multipart/form-data">
+                                <td>
+                                    <input type="file" name="img_files">
+                                </td>
+                                <td>
+                                    <input type="submit" class="btn btn-danger mt-1 mb-3" value="Change"
+                                    name="doi_anh"></i>
+                                </td>
+                            </form> 
                         </tr>
                         <tr>
                             <td class="font-weight-bold">Username: </td>
@@ -260,7 +266,8 @@ function changepfp($file, $user_id) {
                             <?php endif; ?>
                             <?php if ($role != "user"): ?>
                                 <td>
-                                    <a href="./admin.php"><button class="btn-success" type="button">Đi đến trang quản trị: <?php echo $role;?></button></a>
+                                    <a href="./admin.php"><button class="btn-success" type="button">Đến trang quản trị: <?php echo $role;?></button></a>
+                                    <a href="./admin_index.php"><button class="btn-success" type="button">Tạo Board / Category:</button></a>
                                 </td>
                             <?php endif; ?>
                         </tr>
