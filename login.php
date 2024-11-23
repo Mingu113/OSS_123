@@ -2,12 +2,8 @@
 session_start();
 session_unset();
 // Kết nối tới cơ sở dữ liệu
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ntuchan";
+require "./config.php";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
 
 // Kiểm tra kết nối
 if ($conn->connect_error) { 

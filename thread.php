@@ -10,11 +10,14 @@ if (isset($_GET["post"])) {
     $post_id = $_GET["post"];
 }
 $user_id = $_SESSION["user_id"];
+if(isset($user_id))
+{
 $query_check = mysqli_query($conn, "SELECT is_banned FROM Users WHERE user_id = $user_id;");
 $user_is_banned = false;
 if ($result = $query_check->fetch_assoc()) {
     if ($result["is_banned"])
         $user_is_banned = true;
+}
 }
 // Function to upload image to posts
 function uploadImages($image_files): ?string

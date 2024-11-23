@@ -14,18 +14,8 @@
 <?php
 session_unset();
 // Kết nối tới cơ sở dữ liệu
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ntuchan";
+require "./config.php";
 
-// Tạo kết nối
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
     $name = $password = $email = $password_check = $major = null;
     $msg = "";
 // Kiểm tra nếu form đã được gửi
