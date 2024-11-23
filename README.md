@@ -8,5 +8,5 @@
 <p>NTUCHAN được host tại [đây](https://ntu304.vpsttt.vn/)</p>
 <p>Nhấn vào đăng nhập để vào trang đăng nhập, sau đó chọn đăng ký nếu chưa có tài khoản</p>
 <p>Tài khoản không yêu cầu email hoặc nhập khoa</p>
-![Ảnh gif đăng ký, đăng nhập và đăng bình luận trên NTUCHAN](/usage.gif)
+![Ảnh gif đăng ký, đăng nhập và đăng bình luận trên NTUCHAN](usage.gif)
 
