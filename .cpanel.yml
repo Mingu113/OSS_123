@@ -17,3 +17,5 @@ deployment:
     - /bin/cp thread.php $DEPLOYPATH
     - /bin/cp tool.php $DEPLOYPATH
     - /bin/cp user.php $DEPLOYPATH
+    - /bin/cp admin_index.php $DEPLOYPATH
+    - /bin/cp modal.php $DEPLOYPATH
