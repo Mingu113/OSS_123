@@ -48,6 +48,9 @@
         .scrollable-div::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        .ads img{
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -87,9 +90,12 @@
     ?>
     <?php session_abort();
     require "./header.php" ?>
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-2 ads">
+
+            </div>
+            <div class="col-lg-5">
                 <div class="scrollable-div">
                     <?php
                     while ($row = mysqli_fetch_array($result)) {
@@ -111,8 +117,7 @@
                     ?>
                 </div>
             </div>
-
-            <div class="col-lg-4">
+            <div class="col-lg-3">
                 <div class="sidebar">
                     <h3>Tổng Số Người Sử Dụng</h3>
                     <?php echo "<p>" . $sltv . " Thành viên </p>" ?>
@@ -144,6 +149,7 @@
                     </ul>
                 </div>
                 <div>
+                    <h3>Thời tiết tại Nha Trang:</h3>
                     <!--Begin thoitiet.vn Weather Widget -->
                     <iframe
                         src="https://thoitiet.vn/embed/wvrvhpduxgk?days=3&hC=%23ffffff&hB=%23FF0000&tC=%23848484&bC=%23FF0000&lC=%23dddddd"
@@ -154,7 +160,18 @@
                     <!-- End Widget -->
                 </div>
             </div>
+            <div class="col-lg-2 ads">
+                Quảng cáo:
+                <a href="https://thucphamsachfntu.com/product/nuoc-mam-sieu-dam/">
+                <img src="https://thucphamsachfntu.com/wp-content/uploads/2022/03/4-7-scaled.jpg" alt="">
+                </a>
+            </div>
         </div>
+    </div>
+    <div class="ads">
+        <a href="https://tuyensinh.ntu.edu.vn">
+        <img src="image.png" alt="">
+        </a>
     </div>
 
     <?php require "./footer.php" ?>
