@@ -4,18 +4,20 @@ deployment:
     - export DEPLOYPATH=/home/ntu304/public_html/
     - /bin/cp -R images $DEPLOYPATH
     - /bin/cp -R styles $DEPLOYPATH
-    - /bin/cp index.php $DEPLOYPATH
-    - /bin/cp admin.php $DEPLOYPATH
-    - /bin/cp admin_thread.php $DEPLOYPATH
-    - /bin/cp category.php $DEPLOYPATH
-    - /bin/cp config.php $DEPLOYPATH
-    - /bin/cp footer.php $DEPLOYPATH
-    - /bin/cp header.php $DEPLOYPATH
-    - /bin/cp login.php $DEPLOYPATH
-    - /bin/cp register.php $DEPLOYPATH
-    - /bin/cp search.php $DEPLOYPATH
-    - /bin/cp thread.php $DEPLOYPATH
-    - /bin/cp tool.php $DEPLOYPATH
-    - /bin/cp user.php $DEPLOYPATH
-    - /bin/cp admin_index.php $DEPLOYPATH
-    - /bin/cp modal.php $DEPLOYPATH
+    - /bin/cp *.php $DEPLOYPATH
+    # - /bin/cp index.php $DEPLOYPATH
+    # - /bin/cp admin.php $DEPLOYPATH
+    # - /bin/cp admin_thread.php $DEPLOYPATH
+    # - /bin/cp category.php $DEPLOYPATH
+    # - /bin/cp config.php $DEPLOYPATH
+    # - /bin/cp footer.php $DEPLOYPATH
+    # - /bin/cp header.php $DEPLOYPATH
+    # - /bin/cp login.php $DEPLOYPATH
+    # - /bin/cp register.php $DEPLOYPATH
+    # - /bin/cp search.php $DEPLOYPATH
+    # - /bin/cp thread.php $DEPLOYPATH
+    # - /bin/cp tool.php $DEPLOYPATH
+    # - /bin/cp user.php $DEPLOYPATH
+    # - /bin/cp admin_index.php $DEPLOYPATH
+    # - /bin/cp modal.php $DEPLOYPATH
+    # - /bin/cp viewuser.php $DEPLOYPATH
