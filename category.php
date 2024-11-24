@@ -44,12 +44,9 @@
         }
 
         .post_btn {
-            margin-left: auto;
-            margin-right: 0;
             background-color: orange;
             color: white;
-            height: 40px;
-
+            height: 38px;
         }
 
         .filter_btn {
@@ -122,8 +119,10 @@
 
 
     // Đếm tổng số threads thuộc category này
-    if($sort == "post") $sort = "newest_post_at";
-    else if ($sort = "thread") $sort = "created_at";
+    if ($sort == "post")
+        $sort = "newest_post_at";
+    else if ($sort = "thread")
+        $sort = "created_at";
     $count_th_ca_query = "SELECT COUNT(*) as total FROM `Threads` WHERE `category_id` = $category_id";
     $count_th_ca_result = mysqli_query($conn, $count_th_ca_query);
     $total_threads = mysqli_fetch_assoc($count_th_ca_result)['total'];
@@ -175,42 +174,44 @@
         <span><a href="./index.php">Home <i class="bi bi-caret-left"></i> </a>
             <h3 class=""><?php echo $name; ?></h3>
         </span>
-       
-        <div class="d-flex">
-            <!-- Liên kết phân trang -->
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <?php if ($page > 1): ?>
-                        <li class="page-item">
-                            <a class="page-link"
-                                href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
-                                trước</a>
-                        </li>
-                    <?php endif; ?>
+        <div class="row">
+            <div class="d-flex col-lg-8 justify-content-between">
+                <!-- Liên kết phân trang -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <?php if ($page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page - 1; ?>">Trang
+                                    trước</a>
+                            </li>
+                        <?php endif; ?>
 
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <li class="page-item <?php if ($i == $page)
-                            echo 'active'; ?>">
-                            <a class="page-link"
-                                href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                        </li>
-                    <?php endfor; ?>
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?php if ($i == $page)
+                                echo 'active'; ?>">
+                                <a class="page-link"
+                                    href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
 
-                    <?php if ($page < $total_pages): ?>
-                        <li class="page-item">
-                            <a class="page-link"
-                                href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
-                                sau</a>
-                        </li>
+                        <?php if ($page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="./category.php?name=<?php echo urlencode($name); ?>&category_id=<?php echo urlencode($category_id); ?>&page=<?php echo $page + 1; ?>">Trang
+                                    sau</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+                <?php if ($isLoggedIn): ?>
+                    <?php if (!$user_is_banned): ?>
+                        <button class="btn post_btn" data-toggle="modal" data-target="#postModal"><i class="bi bi-pencil"></i>
+                            Post
+                            Thread</button>
                     <?php endif; ?>
-                </ul>
-            </nav>
-            <?php if ($isLoggedIn): ?>
-                <?php if (!$user_is_banned): ?>
-                    <button class="btn post_btn" data-toggle="modal" data-target="#postModal"><i class="bi bi-pencil"></i> Post
-                        Thread</button>
                 <?php endif; ?>
-            <?php endif; ?>
+            </div>
         </div>
         <div class="row">
             <div class="col-lg-8">
@@ -223,12 +224,12 @@
                                     Sort
                                 </button>
                                 <form action="" method="get">
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
-                                    <input type="hidden" name="name" value="<?php echo $name; ?>">
-                                    <button class="dropdown-item" name="sort" value="thread">Bài đăng mới nhất</button>
-                                    <button class="dropdown-item" name="sort" value="post">Bình luận mới nhất</button>
-                                </div>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
+                                        <input type="hidden" name="name" value="<?php echo $name; ?>">
+                                        <button class="dropdown-item" name="sort" value="thread">Bài đăng mới nhất</button>
+                                        <button class="dropdown-item" name="sort" value="post">Bình luận mới nhất</button>
+                                    </div>
                                 </form>
                             </div>
                         </li>
@@ -237,12 +238,12 @@
                                 <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "./images/default.jpg"; ?>"
                                     class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
                                 <div class="content-wrapper ">
-                                    <a href="./thread.php?id=<?php  echo urlencode($value["thread_id"]); ?>"
+                                    <a href="./thread.php?id=<?php echo urlencode($value["thread_id"]); ?>"
                                         class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['title']); ?></a>
                                     <div><span> <?php echo $value["username"] ?></span> |
-                                    <?php if($value["role"] == "admin"):?>
-                                        <span style="color: green;"><?php echo $value["role"];?></span> |
-                                        <?php endif;?>
+                                        <?php if ($value["role"] == "admin"): ?>
+                                            <span style="color: green;"><?php echo $value["role"]; ?></span> |
+                                        <?php endif; ?>
                                         <span><?php echo htmlspecialchars($value['created_at']); ?></span>
                                     </div>
                                 </div>
@@ -291,8 +292,8 @@
                 </div>
                 <br><br><br>
                 <div class="sidebar">
-                    <h4><?php echo "Thông tin: "?></h4>
-                    <h5><?php echo $category["description"];?></h5>
+                    <h4><?php echo "Thông tin: " ?></h4>
+                    <h5><?php echo $category["description"]; ?></h5>
                     <small></small>
                     </ul>
                 </div>
@@ -332,6 +333,8 @@
             </div>
         </div>
     </div>
+
+    <?php require "./footer.php" ?>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

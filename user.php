@@ -343,8 +343,7 @@ function changepfp($file, $user_id) {
             </div>
         </div>
     </div>
-
-
+    <?php require "./footer.php"?>
     <div class="modal fade" id="changeEmailModalLabel" tabindex="-1" aria-labelledby="changeEmailModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -425,7 +424,7 @@ function changepfp($file, $user_id) {
             </div>
         </div>
     </div>
-
+        
     <div class="modal fade" id="changeMajorModalLabel" tabindex="-1" aria-labelledby="changeMajorModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
