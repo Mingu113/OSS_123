@@ -140,7 +140,7 @@
 
     // Truy vấn threads theo giới hạn
     $search_th_ca =
-        "SELECT t.thread_id, t.title, t.category_id, t.created_at, t.newest_post_at, t.posts_count, t.is_pinned, u.profile_pic, u.username, u.role
+        "SELECT t.thread_id, t.title, t.category_id, t.created_at, t.newest_post_at, t.posts_count, t.is_pinned, u.profile_pic, u.username, u.role, u.user_id
     FROM Threads t
     LEFT JOIN 
     Posts p ON t.thread_id = p.thread_id
@@ -235,12 +235,17 @@
                         </li>
                         <?php foreach ($threads_ca as $value): ?>
                             <li class="list-group-item d-flex">
+                                <a href="viewuser.php?user_id=<?php echo $value['user_id'];?>">
                                 <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "./images/default.jpg"; ?>"
                                     class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
+                                </a>
                                 <div class="content-wrapper ">
                                     <a href="./thread.php?id=<?php echo urlencode($value["thread_id"]); ?>"
                                         class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['title']); ?></a>
-                                    <div><span> <?php echo $value["username"] ?></span> |
+                                    <div>
+                                    <a href="viewuser.php?user_id=<?php echo $value['user_id'];?>"> 
+                                    <span> <?php echo $value["username"] ?></span> 
+                                    </a>   |
                                         <?php if ($value["role"] == "admin"): ?>
                                             <span style="color: green;"><?php echo $value["role"]; ?></span> |
                                         <?php endif; ?>
