@@ -2,7 +2,14 @@
 <html lang="en"></html>
 
 
-
+<?php
+    session_start();
+    if(isset($_SESSION["user_id"]) && isset($_GET['user_id'])){
+        if($_SESSION['user_id'] == $_GET['user_id']){
+            header('Location: user.php');
+        }
+    }
+?>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -65,8 +72,6 @@
     session_commit();
     require "./config.php";
     require "./header.php" ;
-
-
     if (isset($_GET["user_id"])) {
         $user_id = $_GET["user_id"];
         $query = "SELECT * FROM `Users` WHERE user_id = '$user_id'";
