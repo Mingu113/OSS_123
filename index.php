@@ -48,7 +48,8 @@
         .scrollable-div::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
-        .ads img{
+
+        .ads img {
             width: 100%;
         }
     </style>
@@ -106,7 +107,7 @@
                         mysqli_data_seek($result1, 0);
                         while ($row1 = mysqli_fetch_array($result1)) {
                             if ($row["board_id"] == $row1["board_id"]) {
-                                echo "<a href='./category.php?name=" . urlencode($row1["name"]) . "&category_id=" . urlencode($row1["category_id"]) . "&sort=thread" . "' class=\"list-group-item list-group-item-action\">";
+                                echo "<a href='./category.php?name=" . urlencode($row1["name"]) . "&category_id=" . urlencode($row1["category_id"]) . "&sort=thread' class=\"list-group-item list-group-item-action\">";
                                 echo $row1["name"];
                                 echo "</a>";
                             }
@@ -163,14 +164,14 @@
             <div class="col-lg-2 ads">
                 Quảng cáo:
                 <a href="https://thucphamsachfntu.com/product/nuoc-mam-sieu-dam/">
-                <img src="https://thucphamsachfntu.com/wp-content/uploads/2022/03/4-7-scaled.jpg" alt="">
+                    <img src="https://thucphamsachfntu.com/wp-content/uploads/2022/03/4-7-scaled.jpg" alt="">
                 </a>
             </div>
         </div>
     </div>
     <div class="ads">
         <a href="https://tuyensinh.ntu.edu.vn">
-        <img src="image.png" alt="">
+            <img src="image.png" alt="">
         </a>
     </div>
 

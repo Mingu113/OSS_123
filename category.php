@@ -81,7 +81,10 @@
                 $user_is_banned = true;
         }
     }
-
+    //Lấy dữ liệu từ GET
+    $name = addslashes($_GET["name"]);
+    $category_id = addslashes($_GET['category_id']);
+    $sort = addslashes($_GET["sort"]);
 
     // Post thread function
     if (isset($_POST["post-thread"]) && isset($_SESSION["user_id"])) {
@@ -90,26 +93,42 @@
         $content = $_POST["post_content"];
         $user_id = $_SESSION["user_id"];
 
-        $query_thread =
-            "INSERT INTO Threads (`title`, `category_id`, `created_at`) 
-        VALUES ('$title', '$category_id', current_timestamp()) ;";
-        mysqli_query($conn, $query_thread);
-        $new_thread_id = mysqli_insert_id($conn);
-        $query_post_thread = "INSERT INTO Posts (`thread_id`, `user_id`, `content`, `created_at`) VALUES ('$new_thread_id', '$user_id', '$content', current_timestamp()) ;";
-        $result_post = mysqli_query($conn, $query_post_thread);
-        if (!$result_post) {
-            // Thong bao ra cho nguoi dung
-            echo "Khong thanh cong";
+        // Kiểm Tra các từ bị cấm từ file txt
+        $file_banned_word = file('./list_banned_words.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $banned_word = false;
+        foreach ($file_banned_word as $word) {
+            $word = trim($word);
+            if (stripos($title, $word) !== false) {
+                $banned_word = $word;
+                break;
+            }
+            if (stripos($content, $word) !== false) {
+                $banned_word = $word;
+                break;
+            }
+        }
+        if ($banned_word) {
+            echo "<script>
+                    alert('Cảnh báo bài viết của bạn chứa từ cấm: \"$banned_word\". Hãy viết lại bài viết mới');
+                    window.location.href = './category.php?name=" . urlencode($name) . "&category_id=" . urlencode($category_id) . " &sort=thread';
+                </script>";
+            exit;
         } else {
-            header("Location: ./thread.php?id=$new_thread_id");
+            $query_thread =
+                "INSERT INTO Threads (`title`, `category_id`, `created_at`) 
+            VALUES ('$title', '$category_id', current_timestamp()) ;";
+            mysqli_query($conn, $query_thread);
+            $new_thread_id = mysqli_insert_id($conn);
+            $query_post_thread = "INSERT INTO Posts (`thread_id`, `user_id`, `content`, `created_at`) VALUES ('$new_thread_id', '$user_id', '$content', current_timestamp()) ;";
+            $result_post = mysqli_query($conn, $query_post_thread);
+            if (!$result_post) {
+                // Thong bao ra cho nguoi dung
+                echo "Khong thanh cong";
+            } else {
+                header("Location: ./thread.php?id=$new_thread_id");
+            }
         }
     }
-
-
-
-    $name = addslashes($_GET["name"]);
-    $category_id = addslashes($_GET['category_id']);
-    $sort = addslashes($_GET["sort"]);
 
     // Tìm kiếm trong bảng categories
     $search_ca = "SELECT * FROM `Categories` WHERE `category_id` = $category_id";
@@ -234,17 +253,17 @@
                         </li>
                         <?php foreach ($threads_ca as $value): ?>
                             <li class="list-group-item d-flex">
-                                <a href="viewuser.php?user_id=<?php echo $value['user_id'];?>">
-                                <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "./images/default.jpg"; ?>"
-                                    class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
+                                <a href="viewuser.php?user_id=<?php echo $value['user_id']; ?>">
+                                    <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "./images/default.jpg"; ?>"
+                                        class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
                                 </a>
                                 <div class="content-wrapper ">
                                     <a href="./thread.php?id=<?php echo urlencode($value["thread_id"]); ?>"
                                         class="topic-name font-weight-bold"><?php echo htmlspecialchars($value['title']); ?></a>
                                     <div>
-                                    <a href="viewuser.php?user_id=<?php echo $value['user_id'];?>"> 
-                                    <span> <?php echo $value["username"] ?></span> 
-                                    </a>   |
+                                        <a href="viewuser.php?user_id=<?php echo $value['user_id']; ?>">
+                                            <span> <?php echo $value["username"] ?></span>
+                                        </a> |
                                         <?php if ($value["role"] == "admin"): ?>
                                             <span style="color: green;"><?php echo $value["role"]; ?></span> |
                                         <?php endif; ?>
