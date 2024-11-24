@@ -68,14 +68,6 @@ $result = $query->get_result();
             right: 15px;
             top: 15px;
         }
-
-        .footer {
-            background-color: #000;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            margin-top: auto;
-        }
     </style>
 </head>
 
@@ -105,9 +97,7 @@ $result = $query->get_result();
         <?php endwhile; ?>
     </div>
 
-    <div class="footer">
-        <p>&copy; 2024 NTUCHAN. All rights reserved.</p>
-    </div>
+    <?php require "./footer.php"?>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -21,6 +21,32 @@
             background-color: antiquewhite;
             padding: 0px 5px 0px 5px;
             border-radius: 10px;
+        }
+
+        .scrollable-div {
+            max-height: 700px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
+
+        .scrollable-div::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .scrollable-div::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .scrollable-div::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+
+        .scrollable-div::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 </head>
@@ -64,24 +90,26 @@
     <div class="container mt-5">
         <div class="row">
             <div class="col-lg-8">
-                <?php
-                while ($row = mysqli_fetch_array($result)) {
-                    echo "<h2>";
-                    echo $row["board_name"];
-                    echo "</h2>";
-                    echo "<div class=\"list-group mb-4\">";
-                    mysqli_data_seek($result1, 0);
-                    while ($row1 = mysqli_fetch_array($result1)) {
-                        if ($row["board_id"] == $row1["board_id"]) {
-                            echo "<a href='./category.php?name=" . urlencode($row1["name"]) . "&category_id=" . urlencode($row1["category_id"]) . "&sort=thread" . "' class=\"list-group-item list-group-item-action\">";
-                            echo $row1["name"];
-                            echo "</a>";
-                        }
+                <div class="scrollable-div">
+                    <?php
+                    while ($row = mysqli_fetch_array($result)) {
+                        echo "<h2>";
+                        echo $row["board_name"];
+                        echo "</h2>";
+                        echo "<div class=\"list-group mb-4\">";
+                        mysqli_data_seek($result1, 0);
+                        while ($row1 = mysqli_fetch_array($result1)) {
+                            if ($row["board_id"] == $row1["board_id"]) {
+                                echo "<a href='./category.php?name=" . urlencode($row1["name"]) . "&category_id=" . urlencode($row1["category_id"]) . "&sort=thread" . "' class=\"list-group-item list-group-item-action\">";
+                                echo $row1["name"];
+                                echo "</a>";
+                            }
 
+                        }
+                        echo "</div>";
                     }
-                    echo "</div>";
-                }
-                ?>
+                    ?>
+                </div>
             </div>
 
             <div class="col-lg-4">
@@ -105,10 +133,11 @@
                         <?php
                         while ($row = mysqli_fetch_array($result4)) {
                             echo "<li>";
-                            if(strlen($row["content"]) > 30) {
+                            if (strlen($row["content"]) > 30) {
                                 $post_content = substr($row["content"], 0, 30) . "...";
-                            } else $post_content = $row["content"];
-                            echo '<a href="./thread.php?id=' . urlencode($row["thread_id"]) . '&post='.urlencode($row["post_id"]).'">' .nl2br(stripcslashes($post_content)) . "</a>";
+                            } else
+                                $post_content = $row["content"];
+                            echo '<a href="./thread.php?id=' . urlencode($row["thread_id"]) . '&post=' . urlencode($row["post_id"]) . '">' . nl2br(stripcslashes($post_content)) . "</a>";
                             echo "</li>";
                         }
                         ?>
@@ -127,6 +156,8 @@
             </div>
         </div>
     </div>
+
+    <?php require "./footer.php" ?>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

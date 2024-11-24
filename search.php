@@ -84,6 +84,31 @@
             font-weight: bold;
             /* Đậm chữ */
         }
+        .scrollable-div {
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
+
+        .scrollable-div::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .scrollable-div::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .scrollable-div::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+
+        .scrollable-div::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
 
@@ -198,7 +223,8 @@
     require "./header.php" ?>
     <div class="container mt-5">
 
-        <span><h3>Từ Khóa tìm kiếm : <?php echo $key; ?></h3>
+        <span>
+            <h3>Từ Khóa tìm kiếm : <?php echo $key; ?></h3>
         </span>
 
         <div class="d-flex">
@@ -232,24 +258,25 @@
             </nav>
         </div>
         <div class="row">
-
-            <ul class="list-group">
-                <?php foreach ($search_results as $value): ?>
-                    <li class="list-group-item d-flex">
-                        <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "./images/default.jpg"; ?>"
-                            class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
-                        <div class="content-wrapper ">
-                            <a href="./thread.php?id=<?php echo urlencode($value['thread_id']); ?>&post=<?php echo urldecode($value['post_id']) ?>"
-                                class="topic-name font-weight-bold"><?php echo highlight(htmlspecialchars($value['Title']), $key); ?></a>
-                            <span><?php echo htmlspecialchars($value['post_content']); ?></span>
-                            <div><span><?php echo $value['username'] ?></span> |
-                                <span><?php echo highlight(htmlspecialchars($value['post_created_at']), $key); ?></span>
+            <div class="scrollable-div">
+                <ul class="list-group">
+                    <?php foreach ($search_results as $value): ?>
+                        <li class="list-group-item d-flex">
+                            <img src="<?php echo (!empty($value["profile_pic"]) && realpath($value["profile_pic"])) ? $value["profile_pic"] : "./images/default.jpg"; ?>"
+                                class="rounded-circle" width="40" height="40" alt="icon" class="my-1 mr-3">
+                            <div class="content-wrapper ">
+                                <a href="./thread.php?id=<?php echo urlencode($value['thread_id']); ?>&post=<?php echo urldecode($value['post_id']) ?>"
+                                    class="topic-name font-weight-bold"><?php echo highlight(htmlspecialchars($value['Title']), $key); ?></a>
+                                <span><?php echo htmlspecialchars($value['post_content']); ?></span>
+                                <div><span><?php echo $value['username'] ?></span> |
+                                    <span><?php echo highlight(htmlspecialchars($value['post_created_at']), $key); ?></span>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                <?php endforeach ?>
-            </ul>
-            <h3></h3>
+                        </li>
+                    <?php endforeach ?>
+                </ul>
+                <h3></h3>
+            </div>
         </div>
         <div class="d-flex">
             <!-- Liên kết phân trang -->
@@ -282,7 +309,7 @@
             </nav>
         </div>
     </div>
-
+    <?php require "./footer.php" ?>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

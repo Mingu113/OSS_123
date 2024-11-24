@@ -108,7 +108,8 @@
             <div class="col-lg-4"></div>
         </div>
     </div>
-
+    
+    <?php require "./footer.php"?>
 
 
     <!-- Optional JavaScript -->
