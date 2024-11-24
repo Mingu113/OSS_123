@@ -107,15 +107,14 @@
 
 
 
-    $name = $_GET["name"];
-    $category_id = $_GET['category_id'];
-    $sort = $_GET["sort"];
+    $name = addslashes($_GET["name"]);
+    $category_id = addslashes($_GET['category_id']);
+    $sort = addslashes($_GET["sort"]);
 
     // Tìm kiếm trong bảng categories
-    $search_ca = "SELECT * FROM `Categories` WHERE `name` LIKE '%$name%'";
+    $search_ca = "SELECT * FROM `Categories` WHERE `category_id` = $category_id";
     $result_categories = mysqli_query($conn, $search_ca);
     $category = mysqli_fetch_assoc($result_categories);
-    $category_id = $category["category_id"];
 
 
     // Đếm tổng số threads thuộc category này
