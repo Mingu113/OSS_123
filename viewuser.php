@@ -17,10 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <title><?php if (!empty($username))
-        echo $username;
-    else
-        echo "No user"; ?></title>
+    <title>Xem tài khoản người dùng</title>
     <style>
         body {
             background-color: #f8f9fa;
