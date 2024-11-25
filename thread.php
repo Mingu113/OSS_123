@@ -515,6 +515,7 @@ if (isset($thread_id)) {
             document.getElementById("reply_to").value = post_id;
             document.getElementById("replied_user_id").value = replied_user_id;
             document.getElementById("reply_to_user").innerText = "Đang trả lời " + username;
+            document.getElementById('new-post').scrollIntoView({behavior: "smooth"})
         }
         function stopReply() {
             document.getElementById("reply_to").value = null;
