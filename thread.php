@@ -359,11 +359,9 @@ if (isset($thread_id)) {
                                     <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
                                 </a>
                                 <?php if ($post["role"] != "user"): ?>
-                                    <p class="user-role"><small><span
-                                                style="color: green;"><?php echo $post["role"]; ?></small></span></p>
+                                    <p class="user-role btn btn-success"><small><span><?php echo $post["role"]; ?></small></span></p>
                                 <?php else: ?>
-                                    <p class="user-role"><small><span
-                                                style="color: black;"><?php echo $post["role"]; ?></small></span></p>
+                                    <p class="user-role btn btn-info"><small><span><?php echo $post["role"]; ?></small></span></p>
                                 <?php endif; ?>
                             </div>
                             <div class="post-content">
@@ -453,7 +451,7 @@ if (isset($thread_id)) {
                             <input type="hidden" name="replied_user_id" id="replied_user_id">
                             <input type="hidden" name="link" value="<?php echo $_SERVER['REQUEST_URI'] ?>">
                             <div><b>
-                                    <p id="reply_to_user"></p><button id="cancel_reply" style="display: none;"
+                                    <p id="reply_to_user"></p><button id="cancel_reply" class="btn btn-danger mt-1 mb-3" style="display: none;"
                                         onclick="stopReply()">Hủy</button>
                                 </b></div>
                             <div class="form-group">

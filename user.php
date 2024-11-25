@@ -266,8 +266,8 @@ function changepfp($file, $user_id) {
                             <?php endif; ?>
                             <?php if ($role != "user"): ?>
                                 <td>
-                                    <a href="./admin.php"><button class="btn-success" type="button">Đến trang quản trị: <?php echo $role;?></button></a>
-                                    <a href="./admin_index.php"><button class="btn-success" type="button">Tạo Board / Category:</button></a>
+                                    <a href="./admin.php"><button class="btn btn-success" type="button">Đến trang quản trị: <?php echo $role;?></button></a>
+                                    <a href="./admin_index.php"><button class="btn btn-success" type="button">Tạo Board / Category:</button></a>
                                 </td>
                             <?php endif; ?>
                         </tr>
