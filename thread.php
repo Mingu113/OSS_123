@@ -45,49 +45,68 @@ if (isset($_POST['btn_post'])) {
     if (isset($_POST['postContent'])) {
         $post_content = mysqli_real_escape_string($conn, $_POST['postContent']);
         $post_content = htmlspecialchars($post_content);
-        $user_id = $_SESSION["user_id"];
-        $query = "INSERT INTO Posts (thread_id, user_id, content, created_at, post_images, reply_to) VALUES (?, ?, ?, NOW(), ?, ?) ;";
-        $query_notify = "INSERT INTO Notifications (user_id, content, is_read, link, created_at) VALUES (?, ?, '0', ?, NOW()) ;";
-        
-        //
-        $file = $_FILES["file_upload"];
-        if ($file['error'][0] == UPLOAD_ERR_OK)
-            $post_images = uploadImages($_FILES["file_upload"]);
-        else
-            $post_images = null;
-        //
 
-        if (!empty($_POST['reply_to'])) {
-            $reply_to = $_POST['reply_to'];
-            $notify_reply = "Có người đã trả lời bình luận của bạn";
-        } else
-            $reply_to = null;
-        //
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("iissi", $thread_id, $user_id, $post_content, $post_images, $reply_to);
-        $update_thread_query = $conn->prepare("UPDATE `Threads` SET `newest_post_at` = NOW() WHERE `Threads`.`thread_id` = ?");
-        $update_thread_query->bind_param("i", $thread_id);
-
-        if ($stmt->execute()) {
-            $update_thread_query->execute();
-            // self reply will not create notification
-            if($reply_to != null && $_POST['replied_user_id'] != $user_id) {
-                $notify = $conn->prepare($query_notify);
-                $notify->bind_param("iss",$_POST["replied_user_id"], $notify_reply, $_POST['link']);
-                $notify->execute();
+        // Kiểm Tra các từ bị cấm từ file txt
+        $file_banned_word = file('./list_banned_words.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $banned_word = false;
+        foreach ($file_banned_word as $word) {
+            $word = trim($word);
+            if (stripos($post_content, $word) !== false) {
+                $banned_word = $word;
+                break;
             }
-            header("HTTP/1.1 303 See Other");
-            $current_uri = $_SERVER["REQUEST_URI"];
-            echo $current_uri;
-            header("Location: $current_uri");
-            // currently not working
-            // Move the old place
-            echo '<script>
-            window.onload = function() {
-                const targetElement = document.getElementById("new-post");
-                targetElement.scrollIntoView({ behavior: "smooth" });
-            };
-            </script>';
+        }
+        if ($banned_word) {
+            echo "<script>
+                    alert('Cảnh báo bài viết của bạn chứa từ cấm: \"$banned_word\". Hãy viết lại bài viết mới');
+                    window.location.href = './thread.php?id=" . urlencode($thread_id) . "';
+                  </script>";
+            exit;
+        } else {
+            $user_id = $_SESSION["user_id"];
+            $query = "INSERT INTO Posts (thread_id, user_id, content, created_at, post_images, reply_to) VALUES (?, ?, ?, NOW(), ?, ?) ;";
+            $query_notify = "INSERT INTO Notifications (user_id, content, is_read, link, created_at) VALUES (?, ?, '0', ?, NOW()) ;";
+
+            //
+            $file = $_FILES["file_upload"];
+            if ($file['error'][0] == UPLOAD_ERR_OK)
+                $post_images = uploadImages($_FILES["file_upload"]);
+            else
+                $post_images = null;
+            //
+
+            if (!empty($_POST['reply_to'])) {
+                $reply_to = $_POST['reply_to'];
+                $notify_reply = "Có người đã trả lời bình luận của bạn";
+            } else
+                $reply_to = null;
+            //
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("iissi", $thread_id, $user_id, $post_content, $post_images, $reply_to);
+            $update_thread_query = $conn->prepare("UPDATE `Threads` SET `newest_post_at` = NOW() WHERE `Threads`.`thread_id` = ?");
+            $update_thread_query->bind_param("i", $thread_id);
+
+            if ($stmt->execute()) {
+                $update_thread_query->execute();
+                // self reply will not create notification
+                if ($reply_to != null && $_POST['replied_user_id'] != $user_id) {
+                    $notify = $conn->prepare($query_notify);
+                    $notify->bind_param("iss", $_POST["replied_user_id"], $notify_reply, $_POST['link']);
+                    $notify->execute();
+                }
+                header("HTTP/1.1 303 See Other");
+                $current_uri = $_SERVER["REQUEST_URI"];
+                echo $current_uri;
+                header("Location: $current_uri");
+                // currently not working
+                // Move the old place
+                echo '<script>
+                window.onload = function() {
+                    const targetElement = document.getElementById("new-post");
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                };
+                </script>';
+            }
         }
     } else {
         echo "Vui lòng điền đầy đủ thông tin.";
@@ -307,9 +326,9 @@ if (isset($thread_id)) {
                             <div class="post-number">#<?php echo $post_index++; ?></div>
                             <div style="margin: 10px; margin-right: 25px">
                                 <a href="viewuser.php?user_id=<?php echo $post['user_id']; ?>">
-                                <img src="<?php echo ($post['profile_pic'] && realpath($post['profile_pic'])) == null ? "./images/default.jpg" : $post["profile_pic"]; ?>"
-                                    alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%;">
-                                <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
+                                    <img src="<?php echo ($post['profile_pic'] && realpath($post['profile_pic'])) == null ? "./images/default.jpg" : $post["profile_pic"]; ?>"
+                                        alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%;">
+                                    <div class="post-username"><?php echo htmlspecialchars($post['username']); ?></div>
                                 </a>
                                 <?php if ($post["role"] != "user"): ?>
                                     <p class="user-role"><small><span
@@ -323,7 +342,7 @@ if (isset($thread_id)) {
                                 <!-- Reply to user  -->
                                 <?php if ($post["reply_to"] != null): ?>
                                     <a href=" " id="reply_to_<?php echo $post['reply_to']; ?>"
-                                        onclick="goToReply(<?php echo $post['reply_to']; ?>)">Đang trả lời: 
+                                        onclick="goToReply(<?php echo $post['reply_to']; ?>)">Đang trả lời:
                                         <?php echo $post['reply_to_user']; ?></a>
                                 <?php endif; ?>
                                 <!--  -->
@@ -392,7 +411,7 @@ if (isset($thread_id)) {
                         <form method="post" action="" enctype="multipart/form-data">
                             <input readonly type="hidden" name="reply_to" id="reply_to" value="">
                             <input type="hidden" name="replied_user_id" id="replied_user_id">
-                            <input type="hidden" name="link" value="<?php echo $_SERVER['REQUEST_URI']?>">
+                            <input type="hidden" name="link" value="<?php echo $_SERVER['REQUEST_URI'] ?>">
                             <div><b>
                                     <p id="reply_to_user"></p><button id="cancel_reply" style="display: none;"
                                         onclick="stopReply()">Hủy</button>
