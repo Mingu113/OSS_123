@@ -56,6 +56,16 @@ function uploadImages($image_files): ?string
     $images_list_string = implode(",", $post_images);
     return $images_list_string;
 }
+// Delete own post
+if(isset($_POST['delete_own_post'])) {
+    $delete_post_id = $_POST['delete_post_id'];
+    $query_delete = 'DELETE FROM Posts WHERE post_id = ?';
+    $execute_query = $conn->prepare($query_delete);
+    $execute_query->bind_param('i', $delete_post_id);
+    $execute_query->execute();
+
+}
+
 // Gửi bài post mới
 if (isset($_POST['btn_post'])) {
     if (isset($_POST['postContent'])) {
@@ -339,7 +349,9 @@ if (isset($thread_id)) {
                     mysqli_data_seek($posts_result, 0); ?>
                     <?php while ($post = mysqli_fetch_assoc($posts_result)): ?>
                         <div class="post" id="<?php echo $post["post_id"] ?>">
-                            <div class="post-number">#<?php echo $post_index++; ?></div>
+                            <div class="post-number">#<?php if($post_index == 1) $is_first_post = true; 
+                            else $is_first_post = false;
+                            echo $post_index++; ?></div>
                             <div style="margin: 10px; margin-right: 25px">
                                 <a href="viewuser.php?user_id=<?php echo $post['user_id']; ?>">
                                     <img src="<?php echo ($post['profile_pic'] && realpath($post['profile_pic'])) == null ? "./images/default.jpg" : $post["profile_pic"]; ?>"
@@ -364,10 +376,22 @@ if (isset($thread_id)) {
                                 <!--  -->
                                 <p><?php echo nl2br(stripcslashes($post['content'])); ?></p>
                                 <p class="post-meta">Thời gian: <strong><?php echo $post['created_at']; ?></strong></p>
-                                <div>
-                                    <button type="button"
+                                <table>
+                                    <tr>
+                                        <td>
+                                    <button type="button" class="btn"
                                         onclick="setReplyTo(<?php echo $post['post_id']; ?>, '<?php echo $post['username']; ?>', <?php echo $post['user_id']; ?>)">Reply</button>
-                                </div>
+                                        </td>
+                                        <?php if(isset($user_id) && $post['user_id'] == $user_id && !$is_first_post): ?>
+                                        <td>
+                                    <form action="" method="post">
+                                        <input type="hidden" name="delete_post_id" value="<?php echo $post['post_id']; ?>">
+                                        <input type="submit" class="btn btn-danger" name="delete_own_post" value="Xóa">
+                                    </form>
+                                        </td>
+                                        <?php endif; ?>
+                                    </tr>
+                                </table>
                                 <?php if ($post["is_banned"] == 1): ?>
                                     <p><span style="color: red;"><small>Người dùng này đã bị ban</small></span></p>
                                 <?php endif; ?>
