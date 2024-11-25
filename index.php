@@ -163,8 +163,8 @@
             </div>
             <div class="col-lg-2 ads">
                 Quảng cáo:
-                <a href="https://thucphamsachfntu.com/product/nuoc-mam-sieu-dam/">
-                    <img src="https://thucphamsachfntu.com/wp-content/uploads/2022/03/4-7-scaled.jpg" alt="">
+                <a href="https://elearning.ntu.edu.vn/user/view.php?course=12951">
+                    <img src="ads.jpg" alt="">
                 </a>
             </div>
         </div>
