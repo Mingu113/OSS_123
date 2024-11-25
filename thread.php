@@ -5,7 +5,23 @@ session_start();
 require "./config.php";
 if (isset($_GET["id"]))
     $thread_id = $_GET["id"];
-if (isset($_GET["post"])) {
+if (isset($_GET["post"]) && empty($_GET["page"])){
+    $post_id = $_GET["post"];
+    // Tính tổng số bài viết tới giới hạn = bài viết cần tìm
+    $post_index = "SELECT COUNT(*) AS index_position
+    FROM Posts
+    WHERE thread_id = $thread_id AND post_id <= $post_id
+    ORDER BY created_at ASC";
+    $result_post_index = mysqli_query($conn, $post_index);
+    $post_position = mysqli_fetch_assoc($result_post_index)['index_position'];
+
+    // Số lượng threads mỗi trang
+    $posts_per_page = 10;
+
+    $page = ceil($post_position/$posts_per_page);
+    header("Location: thread.php?id=".urlencode($thread_id)."&post=".urlencode($post_id)."&page=".urlencode($page)."");
+    exit;
+}elseif(isset($_GET["post"])){
     $post_id = $_GET["post"];
 }
 $user_id = $_SESSION["user_id"];
