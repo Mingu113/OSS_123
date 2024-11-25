@@ -5,4 +5,5 @@ deployment:
     - /bin/cp -R images $DEPLOYPATH
     - /bin/cp -R styles $DEPLOYPATH
     - /bin/cp *.php $DEPLOYPATH
+    - /bin/cp *.png $DEPLOYPATH
     - /bin/cp list_banned_words.txt $DEPLOYPATH
