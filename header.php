@@ -23,7 +23,7 @@
     if ($isLoggedIn) {
         $username = $_SESSION["username"];
         $user_id = $_SESSION["user_id"];
-        $query = "SELECT * FROM Notifications WHERE user_id = $user_id";
+        $query = "SELECT * FROM Notifications WHERE user_id = $user_id ORDER BY created_at DESC";
         $get_notif = $conn->prepare($query);
         $get_notif->execute();
         $notif = $get_notif->get_result();
